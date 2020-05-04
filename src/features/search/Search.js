@@ -1,8 +1,11 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
+import PlayerBadge from '../../components/playerBadge/PlayerBadge'
 import { search, increasePage, selectResults, selectSearch, selectStatus, DONE, SEARCHING, selectPage, nextPage } from './searchSlice';
 import { lookup, invalidateMounts, startInfoLookup } from '../mounts/mountsSlice'
 import { addToGroup, selectMembers } from '../group/groupSlice'
+import styles from './Search.module.css'
+
 export function Search() {
     const dispatch = useDispatch();
     const group = useSelector(selectMembers)
@@ -52,14 +55,21 @@ export function Search() {
 
     return (
         <div>
-            {group.map(v => <img src={v.avatar} />)}
-            <input type="text" placeholder="Search..." onChange={onChange} />
+            {group.map(v => <PlayerBadge data={v} clickHandler={onSelectPlayer} isSmall='true' />)}
+            <input className={styles.search} type="text" placeholder="Search..." onChange={onChange} />
             {pagination(page)}
             {getHeader(status, searchString)}
-            <ul>
+            <ul className={styles.resultsList}>
                 {results.map((result, index) =>
-                    <li key={index}> <img src={result.avatar} onClick={() => onSelectPlayer(result.playerId)} />
-                        {result.name} @ {result.server} <button onClick={() => dispatch(addToGroup(result))}> Add To Group</button>
+                    <li>
+                        <div className={styles.resultItem}>
+                            <PlayerBadge
+                                data={result}
+                                clickHandler={onSelectPlayer} />
+                            <div className={styles.groupAdd}>
+                                <button onClick={() => dispatch(addToGroup(result))}> Add To Group</button>
+                            </div>
+                        </div>
                     </li>
                 )}
             </ul>

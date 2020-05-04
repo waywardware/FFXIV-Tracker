@@ -1,0 +1,25 @@
+.playerBadge {
+    float: left;
+    position: relative;
+    display: table;
+    flex-wrap: wrap;
+    overflow: hidden;
+    margin: 4pt;
+    padding: 4pt;
+    background-color: aliceblue;
+    border-radius: 10px;
+}
+
+.avatar {
+    width: 40pt;
+    height: 40pt;
+    float: left;
+    border-radius: 100%;
+}
+
+.info {
+    display: table-cell;
+    padding-left: 10pt;
+    padding-right: 10pt;
+    vertical-align: middle;
+}

@@ -1,0 +1,30 @@
+
+.resultsList {
+    padding: 0;
+    float: left;
+}
+
+.resultsList li {
+    list-style-type: none;
+}
+
+.resultItem{
+    display: table;
+    width: 100%;
+    overflow: hidden;
+}
+
+.badge {
+    float: left;
+}
+
+.groupAdd {
+    height: 100%;
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.search {
+    width: 100%;
+    height: 20pt;
+}

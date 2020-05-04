@@ -72,7 +72,7 @@ export const lookup = playerId => (dispatch, getState) => {
     let date = Date.now()
 
     dispatch(startingLookup({ playerId, date }))
-    https.get(`https://xivapi.com/character/${playerId}?data=MIMO&extended=2`, res => {
+    https.get(`https://xivapi.com/character/${playerId}?data=MIMO&extended=0`, res => {
         let data = '';
 
         res.on('data', chunk => data += chunk)
