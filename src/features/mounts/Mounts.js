@@ -2,12 +2,12 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 import { selectPlayerId, selectAllMounts } from './mountsSlice'
 import { selectPlayers } from '../player/playerSlice'
+import styles from './Mounts.module.css'
 
 export function Mounts() {
     const allMounts = useSelector(selectAllMounts)
     const playerId = useSelector(selectPlayerId)
     const players = useSelector(selectPlayers)
-
 
     function getImage(mount) {
         var element
@@ -34,14 +34,20 @@ export function Mounts() {
 
     return (
         <div>
-            <ul>
-                {console.log(getMounts)}
+            <table>
                 {getMounts().map((mount, index) =>
-                    <li key={index}>
-                        {getImage(mount)} {mount}
-                    </li>
+                <div className={styles.table}>
+                    <tr>
+                        <td className={styles.tableImg} key={index}>
+                            {getImage(mount)}
+                        </td>
+                        <td key={index}>
+                            {mount}
+                        </td>
+                    </tr>
+                </div>
                 )}
-            </ul>
+            </table>
         </div>
     )
 }

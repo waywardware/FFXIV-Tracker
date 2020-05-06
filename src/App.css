@@ -1,12 +1,17 @@
 .leftPane {
-  width: 20%;
-  height: 100vh;
+  width: 25%;
   float: left;
+  padding: 15px;
+  border-radius: 5px;
 }
 
 .mainPane {
-  height: 100vh;
+  width: 25%;
   float: left;
+  padding: 15px;
+  border-radius: 5px;
+  margin-left: 20px;
+  color:white;
 }
 
 .app {

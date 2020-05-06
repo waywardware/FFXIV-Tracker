@@ -6,11 +6,17 @@ import './App.css';
 function App() {
   return (
     <div className="app">
-      <div className="leftPane">
-        <Search />
-      </div>
-      <div className="mainPane">
-        <Mounts />
+      <div class="row">
+        <div className="leftPane">
+          <div class="card">
+            <Search />
+          </div>
+        </div>
+        <div className="mainPane">
+          <div class="card">
+            <Mounts />
+          </div>
+        </div>
       </div>
     </div>
   );
