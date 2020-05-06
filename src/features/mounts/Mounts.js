@@ -2,6 +2,7 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 import { selectPlayerId, selectStatus, SEARCHING, DONE, selectAllMounts } from './mountsSlice'
 import { selectPlayers } from '../player/playerSlice'
+import styles from './Mounts.module.css'
 
 export function Mounts() {
     const allMounts = useSelector(selectAllMounts)
@@ -14,9 +15,9 @@ export function Mounts() {
     function getHeader(status, searchString) {
         switch (status) {
             case SEARCHING:
-                return <h2>{`Searching for ${searchString}...`}</h2>
+                return <h2>{`Searching ${searchString}...`}</h2>
             case DONE:
-                return <h2>{`Found for ${searchString}:`}</h2>
+                return <h2>{`Found ${searchString}:`}</h2>
             default:
                 return;
         }
@@ -41,14 +42,22 @@ export function Mounts() {
     return (
         <div>
             {getHeader(status, '')}
-            <ul>
+        
+            <table>
                 {console.log(mounts)}
                 {mounts.map((mount, index) =>
-                    <li key={index}>
-                        {getImage(mount)} {mount}
-                    </li>
+                <div className={styles.table}>
+                    <tr>
+                        <td className={styles.tableImg} key={index}>
+                            {getImage(mount)}
+                        </td>
+                        <td key={index}>
+                            {mount}
+                        </td>
+                    </tr>
+                </div>
                 )}
-            </ul>
+            </table>
         </div>
     )
 }

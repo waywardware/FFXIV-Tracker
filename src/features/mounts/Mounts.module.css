@@ -1,0 +1,10 @@
+.table{
+    border: 1px solid #ddd;
+    vertical-align: middle;
+
+}
+.tableImg{
+    display:table-cell;
+    vertical-align:middle;
+    border-right: 1px solid #ddd;
+}
