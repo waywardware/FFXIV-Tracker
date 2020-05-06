@@ -3,34 +3,41 @@ import { createSlice } from '@reduxjs/toolkit'
 export const playerSlice = createSlice({
     name: 'player',
     initialState: {
-        0: {
-            icon: '',
-            name: '',
-            server: '',
-        }
     },
     reducers: {
-        infoFromSearch: (state, action) => {
-            action.payload.forEach(({ id, icon, name, server }) => {
-                if (!state[id]) state[id] = {}
-                Object.assign(state[id], {
-                    icon,
-                    name,
-                    server,
-                });
+        playerSearchSuccess: (state, action) => {
+            let results = action.payload.Results
+            results.foreach(v => {
+                if (!state[v.ID]) state[v.ID] = {}
+                Object.assign(state[v.ID],
+                    {
+                        character: {
+                            icon: v.Avatar,
+                            name: v.Name,
+                            server: v.Server
+                        }
+                    })
             })
         },
-        mountData: (state, action) => {
-            let { playerId, mounts } = action.payload
-            if (!state[playerId]) state[playerId] = {}
-            Object.assign(state[playerId], {
-                mounts
-            })
-        }
+        playerInfoSuccess: (state, action) => {
+            if (!state[action.meta]) state[action.meta] = {}
+            Object.assign(state[action.meta],
+                transformMIMOFromXIVApi(action.payload))
+        },
     }
 })
 
-export const { infoFromSearch, mountData } = playerSlice.actions
+const transformMIMOFromXIVApi = ({ Character, Minions, Mounts }) => ({
+    character: {
+        icon: Character.Avatar,
+        name: Character.Name,
+        server: Character.Server
+    },
+    mounts: Mounts.map(v => v.Name),
+    minions: Minions.map(v => v.Name)
+})
+
+export const { playerInfoSuccess } = playerSlice.actions
 
 export const selectPlayers = state => state.player
 
