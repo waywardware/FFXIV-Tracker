@@ -8,45 +8,23 @@ export const mountsSlice = createSlice({
     name: 'mounts',
     initialState: {
         playerId: 0,
-        date: 0,
         status: EMPTY,
         allMounts: {},
-        results: []
     },
     reducers: {
         startingLookup: (state, action) => {
-            if (state.date > action.payload.date) return;
-
-            state.date = action.date
             state.playerId = action.payload.playerId
             state.status = SEARCHING
-            console.log(`starting for ${state.playerId}`)
         },
         lookupComplete: (state, action) => {
             if (state.playerId !== action.payload.playerId) return
 
-            let payload = action.payload
-            let data = payload.data
-            let r = data.Mounts
-
-            if (r && r.length > 0) {
-                state.date = payload.date
-                state.playerId = payload.playerId
-
-                state.results = r.map(value => ({
-                    icon: value.Icon,
-                    name: value.Name
-                }))
-                state.status = DONE
-            } else {
-                state.status = EMPTY
-            }
+            state.status = DONE
         },
         invalidateMounts: (state, action) => {
             state.playerId = 0
             state.date = 0
             state.status = EMPTY
-            state.results = []
         },
         infoLookupComplete: (state, action) => {
             action.payload.results.forEach(v => {
@@ -60,28 +38,11 @@ export const mountsSlice = createSlice({
 
 export const { startingLookup, lookupComplete, invalidateMounts, infoLookupComplete } = mountsSlice.actions
 
-export const selectResults = state => state.mounts.results
 export const selectStatus = state => state.mounts.status
+export const selectPlayerId = state => state.mounts.playerId
 export const selectAllMounts = state => state.mounts.allMounts
 
-export const lookup = playerId => (dispatch, getState) => {
-    let state = getState();
 
-    if (state.mounts.playerId === playerId) return;
-
-    let date = Date.now()
-
-    dispatch(startingLookup({ playerId, date }))
-    https.get(`https://xivapi.com/character/${playerId}?data=MIMO&extended=0`, res => {
-        let data = '';
-
-        res.on('data', chunk => data += chunk)
-
-        res.on('end', () => {
-            dispatch(lookupComplete({ playerId, date, data: JSON.parse(data) }))
-        })
-    }).on('error', console.log)
-}
 
 export const startInfoLookup = () => (dispatch, getState) => {
     let state = getState();

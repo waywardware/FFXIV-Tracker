@@ -1,11 +1,15 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { selectResults, selectStatus, SEARCHING, DONE, selectAllMounts } from './mountsSlice'
+import { selectPlayerId, selectStatus, SEARCHING, DONE, selectAllMounts } from './mountsSlice'
+import { selectPlayers } from '../player/playerSlice'
 
 export function Mounts() {
     const allMounts = useSelector(selectAllMounts)
-    const mountResults = useSelector(selectResults)
+    const playerId = useSelector(selectPlayerId)
+    const players = useSelector(selectPlayers)
     const status = useSelector(selectStatus)
+
+    let mounts = players[playerId].mounts || [];
 
     function getHeader(status, searchString) {
         switch (status) {
@@ -18,14 +22,30 @@ export function Mounts() {
         }
     }
 
+    function getImage(mount) {
+        var element
+        if (allMounts[mount]) {
+            element = <img src={allMounts[mount].icon}/>
+        } else {
+            //Nasty hack incase names don't quite match
+            Object.keys(allMounts).forEach(key => {
+                if(key.includes(mount) || mount.includes(key)) {
+                    element = <img src={allMounts[key].icon}/>
+                    return;
+                }
+            });
+        }
+        return element;
+    }
+
     return (
         <div>
             {getHeader(status, '')}
             <ul>
-                {console.log(mountResults)}
-                {mountResults.map((result, index) =>
+                {console.log(mounts)}
+                {mounts.map((mount, index) =>
                     <li key={index}>
-                        <img src={allMounts[result.name].icon}/> {result.name}
+                        {getImage(mount)} {mount}
                     </li>
                 )}
             </ul>

@@ -7,7 +7,8 @@ export const groupSlice = createSlice({
     },
     reducers: {
         addToGroup: (state, action) => {
-            state.members.push(action.payload)
+            let { id } = action.payload
+            state.members.push(id)
         },
         restoreGroup: (state, action) => {
             state.members = action.payload

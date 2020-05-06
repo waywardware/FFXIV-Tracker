@@ -1,18 +1,18 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import PlayerBadge from '../../components/playerBadge/PlayerBadge'
-import { search, increasePage, selectResults, selectSearch, selectStatus, DONE, SEARCHING, selectPage, nextPage } from './searchSlice';
-import { lookup, invalidateMounts, startInfoLookup } from '../mounts/mountsSlice'
-import { addToGroup, selectMembers } from '../group/groupSlice'
+import { selectResults, selectSearch, selectPage } from './searchSlice';
+import { startInfoLookup } from '../mounts/mountsSlice'
+import { selectMembers, addToGroup } from '../group/groupSlice'
 import styles from './Search.module.css'
+import { search, getPlayerMountInfo } from '../../app/xivapi';
 
 export function Search() {
     const dispatch = useDispatch();
     const group = useSelector(selectMembers)
     const searchString = useSelector(selectSearch)
-    const results = useSelector(selectResults)
-    const status = useSelector(selectStatus)
     const page = useSelector(selectPage)
+    const results = useSelector(selectResults)
 
     var timeout
 
@@ -26,53 +26,45 @@ export function Search() {
 
         if (timeout) clearTimeout(timeout)
         timeout = setTimeout(() => {
-            dispatch(search(value))
-            dispatch(invalidateMounts())
+            search(value)
         }, 500)
     }
 
-    let onSelectPlayer = id => {
-        dispatch(invalidateMounts())
-        dispatch(lookup(id))
-    }
-
-    function getHeader(status, searchString) {
-        switch (status) {
-            case SEARCHING:
-                return <h2>{`Searching for ${searchString}...`}</h2>
-            case DONE:
-                return <h2>{`Found for ${searchString}:`}</h2>
-            default:
-                return;
-        }
+    let showMounts = id => {
+        getPlayerMountInfo(id)
     }
 
     function pagination(page) {
         if (page.current < page.total) {
-            return <button onClick={() => dispatch(nextPage())}>Next Page</button>
+            //return <button onClick={() => dispatch(nextPage())}>Next Page</button>
         }
     }
 
-    return (
-        <div>
-            {group.map(v => <PlayerBadge data={v} clickHandler={onSelectPlayer} isSmall='true' />)}
-            <input className={styles.search} type="text" placeholder="Search..." onChange={onChange} />
-            {pagination(page)}
-            {getHeader(status, searchString)}
+    function searchResults(results, searchString, currentPage) {
+        if (!results[searchString] || !results[searchString][currentPage]) return;
+        return (
             <ul className={styles.resultsList}>
-                {results.map((result, index) =>
-                    <li>
+                {results[searchString][currentPage].map((playerId, index) =>
+                    <li key={index}>
                         <div className={styles.resultItem}>
                             <PlayerBadge
-                                data={result}
-                                clickHandler={onSelectPlayer} />
+                                playerId={playerId}
+                                clickHandler={showMounts} />
                             <div className={styles.groupAdd}>
-                                <button onClick={() => dispatch(addToGroup(result))}> Add To Group</button>
+                                <button onClick={() => dispatch(addToGroup({ id: playerId }))}> Add To Group</button>
                             </div>
                         </div>
                     </li>
                 )}
             </ul>
+        )
+    }
+
+    return (
+        <div>
+            {group.map(v => <PlayerBadge playerId={v} clickHandler={showMounts} isSmall='true' />)}
+            <input className={styles.search} type="text" placeholder="Search..." onChange={onChange} />
+            {searchResults(results, searchString, page.current)}
         </div>
     )
 }
