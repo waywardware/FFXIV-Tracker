@@ -34,12 +34,6 @@ export function Search() {
         dispatch(selectPlayer({ playerId }))
     }
 
-    function pagination(page) {
-        if (page.current < page.total) {
-            //return <button onClick={() => dispatch(nextPage())}>Next Page</button>
-        }
-    }
-
     function searchResults(results) {
         return (
             <ul className={styles.resultsList}>

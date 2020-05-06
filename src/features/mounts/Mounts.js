@@ -12,12 +12,12 @@ export function Mounts() {
     function getImage(mount) {
         var element
         if (allMounts[mount]) {
-            element = <img src={allMounts[mount].icon}/>
+            element = <img src={allMounts[mount].icon} alt={`${mount} icon`}/>
         } else {
             //Nasty hack in case names don't quite match
             Object.keys(allMounts).forEach(key => {
                 if(key.includes(mount) || mount.includes(key)) {
-                    element = <img src={allMounts[key].icon}/>
+                    element = <img src={allMounts[key].icon} alt={`${mount} icon`}/>
                     return;
                 }
             });
