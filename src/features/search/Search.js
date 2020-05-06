@@ -1,18 +1,17 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import PlayerBadge from '../../components/playerBadge/PlayerBadge'
-import { selectResults, selectSearch, selectPage } from './searchSlice';
-import { startInfoLookup } from '../mounts/mountsSlice'
-import { selectMembers, addToGroup } from '../group/groupSlice'
+import { selectResults, selectSearch, selectPage, addToPinned, selectPinned } from './searchSlice';
+import { startInfoLookup, selectPlayer } from '../mounts/mountsSlice'
 import styles from './Search.module.css'
-import { search, getPlayerMountInfo } from '../../app/xivapi';
+import { searchForPlayer, getPlayerMountInfo } from '../../app/xivapi';
 
 export function Search() {
     const dispatch = useDispatch();
-    const group = useSelector(selectMembers)
-    const searchString = useSelector(selectSearch)
+    const pinned = useSelector(selectPinned)
     const page = useSelector(selectPage)
     const results = useSelector(selectResults)
+    const searchString = useSelector(selectSearch)
 
     var timeout
 
@@ -26,12 +25,13 @@ export function Search() {
 
         if (timeout) clearTimeout(timeout)
         timeout = setTimeout(() => {
-            search(value)
+            dispatch(searchForPlayer(value))
         }, 500)
     }
 
-    let showMounts = id => {
-        getPlayerMountInfo(id)
+    let showMounts = playerId => {
+        dispatch(getPlayerMountInfo({ playerId }))
+        dispatch(selectPlayer({ playerId }))
     }
 
     function pagination(page) {
@@ -40,18 +40,17 @@ export function Search() {
         }
     }
 
-    function searchResults(results, searchString, currentPage) {
-        if (!results[searchString] || !results[searchString][currentPage]) return;
+    function searchResults(results) {
         return (
             <ul className={styles.resultsList}>
-                {results[searchString][currentPage].map((playerId, index) =>
+                {results.map((player, index) =>
                     <li key={index}>
                         <div className={styles.resultItem}>
                             <PlayerBadge
-                                playerId={playerId}
+                                player={player}
                                 clickHandler={showMounts} />
                             <div className={styles.groupAdd}>
-                                <button onClick={() => dispatch(addToGroup({ id: playerId }))}> Add To Group</button>
+                                <button onClick={() => dispatch(addToPinned({ index }))}> Add To Group</button>
                             </div>
                         </div>
                     </li>
@@ -62,7 +61,7 @@ export function Search() {
 
     return (
         <div>
-            {group.map(v => <PlayerBadge playerId={v} clickHandler={showMounts} isSmall='true' />)}
+            {pinned.map(v => <PlayerBadge player={v} clickHandler={showMounts} isSmall='true' />)}
             <input className={styles.search} type="text" placeholder="Search..." onChange={onChange} />
             {searchResults(results, searchString, page.current)}
         </div>

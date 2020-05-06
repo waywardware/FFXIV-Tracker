@@ -8,23 +8,11 @@ export const mountsSlice = createSlice({
     name: 'mounts',
     initialState: {
         playerId: 0,
-        status: EMPTY,
         allMounts: {},
     },
     reducers: {
-        startingLookup: (state, action) => {
+        selectPlayer: (state, action) => {
             state.playerId = action.payload.playerId
-            state.status = SEARCHING
-        },
-        lookupComplete: (state, action) => {
-            if (state.playerId !== action.payload.playerId) return
-
-            state.status = DONE
-        },
-        invalidateMounts: (state, action) => {
-            state.playerId = 0
-            state.date = 0
-            state.status = EMPTY
         },
         infoLookupComplete: (state, action) => {
             action.payload.results.forEach(v => {
@@ -36,13 +24,10 @@ export const mountsSlice = createSlice({
     }
 })
 
-export const { startingLookup, lookupComplete, invalidateMounts, infoLookupComplete } = mountsSlice.actions
+export const { selectPlayer, infoLookupComplete } = mountsSlice.actions
 
-export const selectStatus = state => state.mounts.status
 export const selectPlayerId = state => state.mounts.playerId
 export const selectAllMounts = state => state.mounts.allMounts
-
-
 
 export const startInfoLookup = () => (dispatch, getState) => {
     let state = getState();
