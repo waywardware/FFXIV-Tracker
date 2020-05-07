@@ -5,6 +5,7 @@ import { selectResults, selectSearch, selectPage, addToPinned, selectPinned } fr
 import { startInfoLookup, selectPlayer } from '../mounts/mountsSlice'
 import styles from './Search.module.css'
 import { searchForPlayer, getPlayerMountInfo } from '../../app/xivapi';
+import { List, Paper, TextField } from '@material-ui/core';
 
 export function Search() {
     const dispatch = useDispatch();
@@ -36,28 +37,33 @@ export function Search() {
 
     function searchResults(results) {
         return (
-            <ul className={styles.resultsList}>
-                {results.map((player, index) =>
-                    <li key={index}>
-                        <div className={styles.resultItem}>
-                            <PlayerBadge
-                                player={player}
-                                clickHandler={showMounts} />
-                            <div className={styles.groupAdd}>
-                                <button onClick={() => dispatch(addToPinned({ index }))}> Add To Group</button>
-                            </div>
-                        </div>
-                    </li>
-                )}
-            </ul>
+            <List className={styles.resultsList}>
+                {pinned && pinned.length > 0 && pinned.map((player, index) => (
+                    <PlayerBadge
+                        player={player}
+                        index={index}
+                        showMounts={showMounts}
+                    />
+                ))}
+                {results
+                    .filter(player => pinned.length < 1 || !pinned.find(pinned => pinned.playerId === player.playerId))
+                    .map((player, index) => (
+                        <PlayerBadge
+                            player={player}
+                            index={index}
+                            showMounts={showMounts}
+                            pin={index => dispatch(addToPinned({ index }))}
+                        />
+                    ))}
+
+            </List>
         )
     }
 
     return (
-        <div>
-            {pinned.map(v => <PlayerBadge player={v} clickHandler={showMounts} isSmall='true' />)}
-            <input className={styles.search} type="text" placeholder="Search..." onChange={onChange} />
+        <Paper elevation={3} className={styles.resultsList}>
+            <TextField  size="small" className={styles.searchField} label="Search..." onChange={onChange} variant="outlined" />
             {searchResults(results, searchString, page.current)}
-        </div>
+        </Paper>
     )
 }
