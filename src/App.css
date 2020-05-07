@@ -1,15 +1,11 @@
 .leftPane {
-  width: 25%;
   float: left;
   padding: 15px;
-  border-radius: 5px;
 }
 
 .mainPane {
-  width: 25%;
   float: left;
   padding: 15px;
-  border-radius: 5px;
   margin-left: 20px;
   color:white;
 }

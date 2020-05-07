@@ -28,7 +28,7 @@ export const searchSlice = createSlice({
             let { index } = action.payload
             let playerToPin = state.results[index]
 
-            if (state.pinned.includes(playerToPin)) return
+            if(state.pinned.find(v => v.playerId === playerToPin.playerId)) return
             state.pinned.push(playerToPin)
         }
     }

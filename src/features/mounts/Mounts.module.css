@@ -8,3 +8,7 @@
     vertical-align:middle;
     border-right: 1px solid #ddd;
 }
+
+.padded {
+  padding: 4pt;
+}

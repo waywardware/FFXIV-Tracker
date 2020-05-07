@@ -1,13 +1,29 @@
 import React from 'react'
 import styles from './PlayerBadge.module.css'
+import { ListItem, Button, ListItemSecondaryAction, ListItemAvatar, Avatar, ListItemText, withWidth } from '@material-ui/core';
 
-export default function PlayerBadge(props) {
+function PlayerBadge(props) {
     let player = props.player
 
-    let info = props.isSmall ? <div /> : <div className={styles.info}><span>{player.name}</span> <span>@ {player.server}</span></div>
+    let add = (props.width === 'xs') ? 'Add' : 'Add To Group'
+    let remove = (props.width === 'xs') ? 'Remove' : 'Remove From Group'
 
-    return <div className={styles.playerBadge}>
-        <img className={styles.avatar} src={player.icon} alt={`${player.name} icon`} onClick={() => props.clickHandler(props.player.playerId)} />
-        {info}
-    </div>
+    return (
+        <ListItem button className={styles.playerBadge} key={props.index} onClick={() => props.showMounts(player.playerId)}>
+            <ListItemAvatar>
+                <Avatar alt={player.name} src={player.icon} />
+            </ListItemAvatar>
+            <ListItemText
+                primary={player.name}
+                secondary={player.server}
+            />
+            <ListItemSecondaryAction>
+                <Button onClick={() => (props.pin) ? props.pin(props.index) : console.log()}>
+                    {(props.pin) ? add : remove}
+                </Button>
+            </ListItemSecondaryAction>
+        </ListItem>
+    )
 }
+
+export default withWidth()(PlayerBadge)
