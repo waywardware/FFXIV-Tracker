@@ -1,15 +1,16 @@
 import React from 'react';
+import expect from 'expect'
 import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import store from './app/store';
 import App from './App';
 
 test('renders learn react link', () => {
-  const { getByPlaceholderText } = render(
+  const { getAllByText } = render(
     <Provider store={store}>
       <App />
     </Provider>
   );
 
-  expect(getByPlaceholderText(/Search.../i)).toBeInTheDocument();
+  expect(getAllByText(/Search.../i)).toHaveLength(2);
 });
