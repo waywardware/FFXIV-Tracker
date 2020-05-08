@@ -10,10 +10,13 @@ export const mountsSlice = createSlice({
         allMountData: UNLOADED,
         status: UNLOADED,
         playerId: 0,
-        onlyInclude: ["Trial"],
+        appliedFilters: ["Trial"],
         allMounts: [],
     },
     reducers: {
+        setFilter: (state, action) => {
+            state.appliedFilters = action.payload.onlyInclude
+        }
     },
     extraReducers: {
         [fetchAllMountsRequest]: (state) => {
@@ -27,31 +30,31 @@ export const mountsSlice = createSlice({
     },
 })
 
+const filterByPinnedPlayers = player => player.isPinned
+const filterByPlayersWithMounts = player => !!player.mounts
+const filterByAppliedFilters = appliedFilters => mount => appliedFilters
+    .find(askedSourceType => mount.sources
+        .find(mountsSource => askedSourceType === mountsSource.type))
 
-const addMountData = (allMounts, playerMounts) => allMounts.map((mount) => {
-    let obtained = playerMounts[mount.name] ||
-        !!Object.keys(playerMounts).find(playersMountName => (playersMountName.includes(mount.name) || mount.name.includes(playersMountName)))
+const mapFlat = ({ character: { playerId, name, icon, server }, mounts }) => ({ playerId, name, icon, server, mounts })
+const mapMountData = (allMounts) => player => Object.assign({}, player, {
+    mounts: allMounts.map((mount) => {
+        let obtained = player.mounts[mount.name] ||
+            !!Object.keys(player.mounts).find(playersMountName => (playersMountName.includes(mount.name) || mount.name.includes(playersMountName)))
 
-    return Object.assign({}, mount, { obtained })
-})
-
-const applyFilters = (mounts, onlyInclude) => mounts
-    .filter(mount => onlyInclude
-        .find(askedSourceType => mount.sources
-            .find(mountsSource => askedSourceType === mountsSource.type)
-        )
-    )
-
-export const selectPinned = state => {
-    let pinnedPlayerList = Object.values(state.player.players)
-        .filter(player => player.isPinned && player.mounts)
-        .map(({character: {playerId, name, icon, server}, mounts}) => ({playerId, name, icon, server, mounts}))
-
-    return pinnedPlayerList.map(player => {
-        player.mounts = addMountData(state.mounts.allMounts, player.mounts);
-        player.mounts = applyFilters(player.mounts, state.mounts.onlyInclude)
-        return player
+        return Object.assign({}, mount, { obtained })
     })
-}
+})
+const mapAppliedFilters = appliedFilters => player => Object.assign({}, player, {
+    mounts:
+        player.mounts.filter(filterByAppliedFilters(appliedFilters))
+})
+const curry = (...functions) => (player) => functions.reduce((acc, fun) => fun(acc), player)
+
+
+export const selectPinned = state => Object.values(state.player.players)
+    .filter(filterByPinnedPlayers && filterByPlayersWithMounts)
+    .map(curry(mapFlat, mapMountData(state.mounts.allMounts), mapAppliedFilters(state.mounts.appliedFilters)))
+    .reduce((acc, player) => Object.assign({}, acc, { [player.playerId]: player }), {})
 
 export default mountsSlice.reducer

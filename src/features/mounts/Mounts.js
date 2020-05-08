@@ -9,7 +9,7 @@ export function Mounts() {
 
     return (
         <div>
-            {pinned.map(player =>
+            {console.log(pinned) || Object.values(pinned).map(player =>
                 <Paper className={styles.mountResult} elevation={3} key={player.playerId}>
                     <Grid className={styles.padded} container direction="row" justify="flex-start" alignItems="center">
                         <Grid item>
