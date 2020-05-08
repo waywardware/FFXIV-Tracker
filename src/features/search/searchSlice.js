@@ -1,35 +1,29 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { playerSearchRequest, playerSearchSuccess } from '../../app/xivapi';
+
+export const SEARCHING = 0
+export const DONE = 1
 
 export const searchSlice = createSlice({
     name: 'search',
     initialState: {
         value: '',
+        status: DONE,
         page: {
             current: 0,
             total: 0,
         },
-        pinned: [],
         results: []
     },
-    reducers: {
-        playerSearchRequest: (state, action) => {
-            state.value = action.meta;
+    extraReducers: {
+        [playerSearchRequest]: (state, action) => {
+            state.value = action.meta.name;
         },
-        updatePage: (state, action) => {
-            state.page = action.payload
-        },
-        playerSearchSuccess: (state, action) => {
-            if (state.value !== action.meta) return;
+        [playerSearchSuccess]: (state, action) => {
+            if (state.value !== action.meta.name) return;
             let payload = transformForSearch(action.payload)
             state.page = payload.page
             state.results = payload.results
-        },
-        addToPinned: (state, action) => {
-            let { index } = action.payload
-            let playerToPin = state.results[index]
-
-            if(state.pinned.find(v => v.playerId === playerToPin.playerId)) return
-            state.pinned.push(playerToPin)
         }
     }
 })
@@ -48,11 +42,16 @@ const transformForSearch = (payload) =>
         }))
     })
 
-export const { playerSearchRequest, updatePage, playerSearchSuccess, addToPinned } = searchSlice.actions
-
 export const selectSearch = state => state.search.value
-export const selectResults = state => state.search.results
+export const selectResults = state => {
+    let results = state.search.results.filter(result => !state.player.players[result.playerId].isPinned)
+
+    let pinned = Object.values(state.player.players)
+        .filter(player => player.isPinned)
+        .map(player => Object.assign({}, player.character, { isPinned: player.isPinned }))
+
+    return pinned.concat(results)
+}
 export const selectPage = state => state.search.page
-export const selectPinned = state => state.search.pinned
 
 export default searchSlice.reducer

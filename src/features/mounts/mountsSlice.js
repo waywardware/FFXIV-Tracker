@@ -1,47 +1,57 @@
 import { createSlice } from '@reduxjs/toolkit';
-const https = require('https');
+import { fetchAllMountsRequest, fetchAllMountsSuccess } from '../../app/ffxivcollect'
 
-export const EMPTY = 0;
-export const DONE = 1;
-export const SEARCHING = 2;
+export const UNLOADED = 1;
+export const LOADING = 2;
+export const LOADED = 3;
 export const mountsSlice = createSlice({
     name: 'mounts',
     initialState: {
+        allMountData: UNLOADED,
+        status: UNLOADED,
         playerId: 0,
-        allMounts: {},
+        onlyInclude: ["Trial"],
+        allMounts: [],
     },
     reducers: {
-        selectPlayer: (state, action) => {
-            state.playerId = action.payload.playerId
+    },
+    extraReducers: {
+        [fetchAllMountsRequest]: (state) => {
+            state.allMountData = LOADING
         },
-        infoLookupComplete: (state, action) => {
-            action.payload.results.forEach(v => {
-                state.allMounts[v.name] = {
-                    icon: v.icon
-                }
-            })
+        [fetchAllMountsSuccess]: (state, action) => {
+            state.allMounts = action.payload.results
+                .sort((a, b) => a.id - b.id)
+            state.allMountData = LOADED
         }
-    }
+    },
 })
 
-export const { selectPlayer, infoLookupComplete } = mountsSlice.actions
 
-export const selectPlayerId = state => state.mounts.playerId
-export const selectAllMounts = state => state.mounts.allMounts
+const addMountData = (allMounts, playerMounts) => allMounts.map((mount) => {
+    let obtained = playerMounts[mount.name] ||
+        !!Object.keys(playerMounts).find(playersMountName => (playersMountName.includes(mount.name) || mount.name.includes(playersMountName)))
 
-export const startInfoLookup = () => (dispatch, getState) => {
-    let state = getState();
-    if (Object.keys(state.mounts.allMounts).length > 0) return;
+    return Object.assign({}, mount, { obtained })
+})
 
-    https.get('https://ffxivcollect.com/api/mounts', res => {
-        let data = '';
+const applyFilters = (mounts, onlyInclude) => mounts
+    .filter(mount => onlyInclude
+        .find(askedSourceType => mount.sources
+            .find(mountsSource => askedSourceType === mountsSource.type)
+        )
+    )
 
-        res.on('data', chunk => data += chunk)
+export const selectPinned = state => {
+    let pinnedPlayerList = Object.values(state.player.players)
+        .filter(player => player.isPinned && player.mounts)
+        .map(({character: {playerId, name, icon, server}, mounts}) => ({playerId, name, icon, server, mounts}))
 
-        res.on('end', () => {
-            dispatch(infoLookupComplete(JSON.parse(data)))
-        })
-    }).on('error', console.log)
+    return pinnedPlayerList.map(player => {
+        player.mounts = addMountData(state.mounts.allMounts, player.mounts);
+        player.mounts = applyFilters(player.mounts, state.mounts.onlyInclude)
+        return player
+    })
 }
 
 export default mountsSlice.reducer

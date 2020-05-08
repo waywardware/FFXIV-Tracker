@@ -1,46 +1,36 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { selectPlayerId, selectAllMounts } from './mountsSlice'
-import { selectPlayers } from '../player/playerSlice'
+import { selectPinned } from './mountsSlice'
+import { GridListTile, GridList, Avatar, Paper, Typography, Grid } from '@material-ui/core'
 import styles from './Mounts.module.css'
-import { GridListTile, GridList, Paper } from '@material-ui/core'
 
 export function Mounts() {
-    const allMounts = useSelector(selectAllMounts)
-    const playerId = useSelector(selectPlayerId)
-    const players = useSelector(selectPlayers)
+    const pinned = useSelector(selectPinned)
 
-    function getImage(mount) {
-        var element
-        if (allMounts[mount]) {
-            element = <img src={allMounts[mount].icon} alt={`${mount} icon`} />
-        } else {
-            //Nasty hack in case names don't quite match
-            Object.keys(allMounts).forEach(key => {
-                if (key.includes(mount) || mount.includes(key)) {
-                    element = <img src={allMounts[key].icon} alt={`${mount} icon`} />
-                    return;
-                }
-            });
-        }
-        return element;
-    }
-
-    function getMounts() {
-        if (players[playerId]) {
-            return players[playerId].mounts || []
-        }
-        return []
-    }
-
-    return getMounts() && getMounts().length > 0 && <Paper elevation={3} className={styles.padded}>
-            <GridList cellHeight={80} cellWidth={80} cols="10" space={3}>
-                {getMounts().map((mount, index) => (
-                    <GridListTile key={index}>
-                        {getImage(mount)}
-                        {mount}
-                    </GridListTile>
-                ))}
-            </GridList>
-        </Paper>
+    return (
+        <div>
+            {pinned.map(player =>
+                <Paper className={styles.padded} elevation={3} key={player.playerId}>
+                    <Grid className={styles.padded} container direction="row" justify="flex-start" alignItems="center">
+                        <Grid item>
+                            <Avatar src={player.icon}>
+                                {player.name}
+                            </Avatar>
+                        </Grid>
+                        <Grid item style={({marginLeft: "8pt"})}>
+                            <Typography variant="h6">{player.name}</Typography>
+                        </Grid>
+                    </Grid>
+                    <GridList cellHeight="auto" cols={0} spacing={6}>
+                        {player.mounts.map(({ icon, name, obtained }) => (
+                            <GridListTile className={obtained ? styles.obtained : styles.notObtained} key={name}>
+                                <Avatar variant="rounded" src={icon} alt={`${name} icon`} />
+                                {name}
+                            </GridListTile>
+                        ))}
+                    </GridList>
+                </Paper>
+            )}
+        </div>
+    )
 }
