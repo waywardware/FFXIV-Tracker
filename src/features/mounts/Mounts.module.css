@@ -1,14 +1,33 @@
-.table{
-    border: 1px solid #ddd;
-    vertical-align: middle;
-
-}
-.tableImg{
-    display:table-cell;
-    vertical-align:middle;
-    border-right: 1px solid #ddd;
+.pinned {
+    margin-bottom: 4pt;
 }
 
 .padded {
-  padding: 4pt;
+    padding: 8pt;
+}
+
+.boundToVH {
+    max-height: 100%;
+}
+
+.floatLeft {
+    float: left;
+}
+
+.chipArray {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 12pt;
+    margin-left: 6pt;
+    margin-right: 6pt;
+    margin-bottom: 12pt;
+}
+
+.chipArray > * {
+    margin: 5pt;
+}
+
+.notObtained {
+    filter: grayscale(100%)
 }

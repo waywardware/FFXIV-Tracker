@@ -1,13 +1,5 @@
-.leftPane {
-  float: left;
-  padding: 15px;
-}
-
-.mainPane {
-  float: left;
-  padding: 15px;
-  margin-left: 20px;
-  color:white;
+.grid {
+  height: calc(100vh - 10px);
 }
 
 .app {

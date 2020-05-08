@@ -1,15 +1,15 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import PlayerBadge from '../../components/playerBadge/PlayerBadge'
-import { selectResults, selectSearch, selectPage, addToPinned, selectPinned } from './searchSlice';
-import { startInfoLookup, selectPlayer } from '../mounts/mountsSlice'
-import styles from './Search.module.css'
+import { toggledPin } from '../player/playerSlice'
+import { selectResults, selectSearch, selectPage } from './searchSlice';
 import { searchForPlayer, getPlayerMountInfo } from '../../app/xivapi';
-import { List, Paper, TextField } from '@material-ui/core';
+import { fetchAllMounts } from '../../app/ffxivcollect'
+import { Paper, TextField } from '@material-ui/core';
+import styles from './Search.module.css'
 
 export function Search() {
     const dispatch = useDispatch();
-    const pinned = useSelector(selectPinned)
     const page = useSelector(selectPage)
     const results = useSelector(selectResults)
     const searchString = useSelector(selectSearch)
@@ -17,12 +17,11 @@ export function Search() {
     var timeout
 
     useEffect(() => {
-        dispatch(startInfoLookup())
-    })
+        dispatch(fetchAllMounts())
+    }, [dispatch])
 
     let onChange = event => {
         let value = event.target.value
-        console.log("Change", value)
 
         if (timeout) clearTimeout(timeout)
         timeout = setTimeout(() => {
@@ -32,38 +31,40 @@ export function Search() {
 
     let showMounts = playerId => {
         dispatch(getPlayerMountInfo({ playerId }))
-        dispatch(selectPlayer({ playerId }))
+    }
+
+    let togglePlayerPin = playerId => {
+        dispatch(toggledPin({ playerId }))
+        dispatch(getPlayerMountInfo({ playerId, forPinned: true }))
     }
 
     function searchResults(results) {
         return (
-            <List className={styles.resultsList}>
-                {pinned && pinned.length > 0 && pinned.map((player, index) => (
-                    <PlayerBadge
-                        player={player}
-                        index={index}
-                        showMounts={showMounts}
-                    />
-                ))}
+            <div className={styles.resultsList}>
                 {results
-                    .filter(player => pinned.length < 1 || !pinned.find(pinned => pinned.playerId === player.playerId))
                     .map((player, index) => (
                         <PlayerBadge
-                            player={player}
-                            index={index}
-                            showMounts={showMounts}
-                            pin={index => dispatch(addToPinned({ index }))}
+                            key={player.playerId}
+                            name={player.name}
+                            server={player.server}
+                            icon={player.icon}
+                            isPinned={player.isPinned}
+                            showMounts={() => showMounts(player.playerId)}
+                            togglePin={() => togglePlayerPin(player.playerId)}
                         />
                     ))}
 
-            </List>
+            </div>
         )
     }
 
     return (
-        <Paper elevation={3} className={styles.resultsList}>
-            <TextField  size="small" className={styles.searchField} label="Search..." onChange={onChange} variant="outlined" />
+        <div>
+            <Paper elevation={3} className={styles.searchField}>
+                <TextField size="small" className={styles.searchField} label="Search..." onChange={onChange} variant="outlined" />
+            </Paper>
             {searchResults(results, searchString, page.current)}
-        </Paper>
+        </div>
+
     )
 }

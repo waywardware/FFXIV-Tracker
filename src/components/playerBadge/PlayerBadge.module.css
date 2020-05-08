@@ -1,5 +1,4 @@
 .playerBadge {
-    display: flex;
     background-color: aliceblue;
-    margin: 5pt;
+    margin-top: 8pt;
 }
