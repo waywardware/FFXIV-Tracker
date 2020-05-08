@@ -10,7 +10,7 @@ export function Mounts() {
     return (
         <div>
             {pinned.map(player =>
-                <Paper className={styles.padded} elevation={3} key={player.playerId}>
+                <Paper className={styles.mountResult} elevation={3} key={player.playerId}>
                     <Grid className={styles.padded} container direction="row" justify="flex-start" alignItems="center">
                         <Grid item>
                             <Avatar src={player.icon}>
