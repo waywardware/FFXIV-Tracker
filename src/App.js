@@ -6,7 +6,7 @@ import './App.css';
 
 function App() {
   return (
-    <Grid className="grid" container spacing={2}>
+    <Grid className="grid" direction="row" container spacing={2} alignItems="flex-start" justify="flex-start">
       <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
         <Search />
       </Grid>
