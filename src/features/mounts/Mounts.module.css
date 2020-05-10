@@ -19,18 +19,12 @@
     margin-bottom: 6pt;
 }
 
-.chipArray {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-top: 12pt;
-    margin-left: 6pt;
-    margin-right: 6pt;
-    margin-bottom: 12pt;
+.chip {
+    margin: 2pt
 }
 
-.chipArray > * {
-    margin: 5pt;
+.chipArrayContainer {
+    margin-left: 12pt;
 }
 
 .notObtained {

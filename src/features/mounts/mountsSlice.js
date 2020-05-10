@@ -4,18 +4,47 @@ import { fetchAllMountsRequest, fetchAllMountsSuccess } from '../../app/ffxivcol
 export const UNLOADED = 1;
 export const LOADING = 2;
 export const LOADED = 3;
+
+export const POSSIBLE_FILTERS = [
+    "Achievement",
+    "Crafting",
+    "Deep Dungeon",
+    "Dungeon",
+    "Eureka",
+    "Event",
+    "Feast",
+    "Limited",
+    "Other",
+    "Premium",
+    "Purchase",
+    "Quest",
+    "Raid",
+    "Trial"
+]
 export const mountsSlice = createSlice({
     name: 'mounts',
     initialState: {
         allMountData: UNLOADED,
-        status: UNLOADED,
+        forcedObtained: {},
         playerId: 0,
         appliedFilters: ["Trial"],
         allMounts: [],
     },
     reducers: {
-        setFilter: (state, action) => {
-            state.appliedFilters = action.payload.onlyInclude
+        toggleFilter: ({ appliedFilters }, action) => {
+            let { filter } = action.payload
+
+            let index = appliedFilters.indexOf(filter)
+            index > -1 ? appliedFilters.splice(index, 1) :
+                appliedFilters.push(filter)
+        },
+        toggleObtained: ({ forcedObtained }, action) => {
+            let { playerId, mountId } = action.payload
+            if (!forcedObtained[playerId]) forcedObtained[playerId] = []
+
+            let index = forcedObtained[playerId].indexOf(mountId)
+            index > -1 ? forcedObtained[playerId].splice(index, 1) :
+                forcedObtained[playerId].push(mountId)
         }
     },
     extraReducers: {
@@ -32,29 +61,41 @@ export const mountsSlice = createSlice({
 
 const filterByPinnedPlayers = player => player.isPinned
 const filterByPlayersWithMounts = player => !!player.mounts
-const filterByAppliedFilters = appliedFilters => mount => appliedFilters
-    .find(askedSourceType => mount.sources
-        .find(mountsSource => askedSourceType === mountsSource.type))
+const filterByAppliedFilters = appliedFilters => mount => {
+    if (appliedFilters.length === 0) return true;
+    return appliedFilters
+        .find(askedSourceType => mount.sources
+            .find(mountsSource => askedSourceType === mountsSource.type))
+}
 
 const mapFlat = ({ character: { playerId, name, icon, server }, mounts }) => ({ playerId, name, icon, server, mounts })
-const mapMountData = (allMounts) => player => Object.assign({}, player, {
+
+const mapMountData = (allMounts, forcedObtained) => player => Object.assign({}, player, {
     mounts: allMounts.map((mount) => {
         let obtained = player.mounts[mount.name] ||
             !!Object.keys(player.mounts).find(playersMountName => (playersMountName.includes(mount.name) || mount.name.includes(playersMountName)))
 
-        return Object.assign({}, mount, { obtained })
+        return Object.assign({}, mount, {
+            obtained: obtained
+                || (forcedObtained[player.playerId] && forcedObtained[player.playerId].includes(mount.id))
+        })
     })
 })
-const mapAppliedFilters = appliedFilters => player => Object.assign({}, player, {
-    mounts:
-        player.mounts.filter(filterByAppliedFilters(appliedFilters))
-})
-const curry = (...functions) => (player) => functions.reduce((acc, fun) => fun(acc), player)
 
+const mapAppliedFilters = appliedFilters => player => Object.assign({}, player, {
+    mounts: player.mounts.filter(filterByAppliedFilters(appliedFilters))
+})
 
 export const selectPinned = state => Object.values(state.player.players)
-    .filter(filterByPinnedPlayers && filterByPlayersWithMounts)
-    .map(curry(mapFlat, mapMountData(state.mounts.allMounts), mapAppliedFilters(state.mounts.appliedFilters)))
+    .filter(filterByPinnedPlayers)
+    .filter(filterByPlayersWithMounts)
+    .map(mapFlat)
+    .map(mapMountData(state.mounts.allMounts, state.mounts.forcedObtained))
+    .map(mapAppliedFilters(state.mounts.appliedFilters))
     .reduce((acc, player) => Object.assign({}, acc, { [player.playerId]: player }), {})
+
+export const selectAppliedFilters = state => state.mounts.appliedFilters
+
+export const { toggleObtained, toggleFilter } = mountsSlice.actions
 
 export default mountsSlice.reducer

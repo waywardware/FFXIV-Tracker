@@ -29,10 +29,6 @@ export function Search() {
         }, 500)
     }
 
-    let showMounts = playerId => {
-        dispatch(getPlayerMountInfo({ playerId }))
-    }
-
     let togglePlayerPin = playerId => {
         dispatch(toggledPin({ playerId }))
         dispatch(getPlayerMountInfo({ playerId, forPinned: true }))
@@ -49,7 +45,6 @@ export function Search() {
                             server={player.server}
                             icon={player.icon}
                             isPinned={player.isPinned}
-                            showMounts={() => showMounts(player.playerId)}
                             togglePin={() => togglePlayerPin(player.playerId)}
                         />
                     ))}

@@ -44,13 +44,21 @@ const transformForSearch = (payload) =>
 
 export const selectSearch = state => state.search.value
 export const selectResults = state => {
-    let results = state.search.results.filter(result => !state.player.players[result.playerId].isPinned)
+    let results = state.search.results
+        .filter(result => !state.player.players[result.playerId] || !state.player.players[result.playerId].isPinned)
 
     let pinned = Object.values(state.player.players)
         .filter(player => player.isPinned)
-        .map(player => Object.assign({}, player.character, { isPinned: player.isPinned }))
+        .map(player => {
+            return Object.assign({}, player.character, {
+                icon,
+                server,
+                name,
+                isPinned: player.isPinned
+            })
+        })
 
-    return pinned.concat(results)
+    return results
 }
 export const selectPage = state => state.search.page
 

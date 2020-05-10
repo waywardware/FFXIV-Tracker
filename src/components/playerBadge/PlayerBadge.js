@@ -6,7 +6,7 @@ import { Add, Remove } from '@material-ui/icons'
 export default function PlayerBadge(props) {
 
     return (
-        <Card className={styles.playerBadge} onClick={() => props.showMounts()}>
+        <Card className={styles.playerBadge}>
             <CardHeader
                 avatar={<Avatar alt={props.name} src={props.icon} />}
                 title={props.name}

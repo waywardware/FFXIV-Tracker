@@ -18,18 +18,18 @@ export const playerSlice = createSlice({
         },
     },
     extraReducers: {
-        [playerSearchRequest]: (state) => Object.assign({}, state, { status: LOADING }),
-        [playerSearchSuccess]: (state, action) => {
-            let results = action.payload.Results;
-            results.forEach(result => {
-                result = transformSearchFromXIVApi(result)
-                let { character } = result
+        // [playerSearchRequest]: (state) => Object.assign({}, state, { status: LOADING }),
+        // [playerSearchSuccess]: (state, action) => {
+        //     let results = action.payload.Results;
+        //     results.forEach(result => {
+        //         result = transformSearchFromXIVApi(result)
+        //         let { character } = result
 
-                if (!state.players[character.playerId]) state.players[character.playerId] = {}
-                Object.assign(state.players[character.playerId], result)
-            })
-            state.status = STABLE
-        },
+        //         if (!state.players[character.playerId]) state.players[character.playerId] = {}
+        //         Object.assign(state.players[character.playerId], result)
+        //     })
+        //     state.status = STABLE
+        // },
         [playerInfoRequest]: state => Object.assign({}, state, { status: LOADING }),
         [playerInfoSuccess]: (state, action) => {
             let { playerId } = action.meta
