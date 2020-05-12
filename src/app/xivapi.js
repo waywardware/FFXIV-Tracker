@@ -1,42 +1,52 @@
 import { createAction } from 'redux-api-middleware'
+import { playerSearchRequest, playerSearchSuccess} from '../features/search/searchSlice'
+import { playerInfoRequest, playerInfoSuccess } from '../features/mounts/mountsSlice'
 
-const xivapi = "xivapi/"
-export const playerSearchRequest = xivapi + "searchRequest"
-export const playerSearchSuccess = xivapi + "searchSuccess"
 
 export const searchForPlayer = (name, page = 1) => createAction({
     endpoint: `https://xivapi.com/character/search?name=${name}&page=${page}`,
     method: 'GET',
     types: [
         {
-            type: playerSearchRequest,
+            type: playerSearchRequest.type,
             meta: { name }
         },
         {
-            type: playerSearchSuccess,
+            type: playerSearchSuccess.type,
             meta: { name }
         },
         'FAILURE']
 })
-
-export const playerInfoRequest = xivapi + "playerInfoRequest"
-export const playerInfoSuccess = xivapi + "playerInfoSuccess"
 
 export const getPlayerMountInfo = ({ playerId, forPinned = false }) => createAction({
     endpoint: `https://xivapi.com/character/${playerId}?data=MIMO&extended=0`,
     method: 'GET',
     types: [
         {
-            type: playerInfoRequest,
-            meta: { playerId, forPinned }
+            type: playerInfoRequest.type,
+            meta: { playerId }
         },
         {
-            type: playerInfoSuccess,
-            meta: { playerId, forPinned }
+            type: playerInfoSuccess.type,
+            meta: { playerId }
         },
         'FAILURE'
     ]
 })
+
+export const transformSearchFromXIVApi = (payload) =>
+    ({
+        page: {
+            current: payload.Pagination.Page,
+            total: payload.Pagination.PageTotal,
+        },
+        results: payload.Results.map(r => ({
+            icon: r.Avatar,
+            playerId: r.ID,
+            name: r.Name,
+            server: r.Server,
+        }))
+    })
 
 export const transformMIMOFromXIVApi = ({ Character, Minions, Mounts }) => {
     let playerInfo = {
@@ -46,7 +56,7 @@ export const transformMIMOFromXIVApi = ({ Character, Minions, Mounts }) => {
             name: Character.Name,
             server: Character.Server
         },
-        mounts: {},
+        mounts: [],
         minions: {}
     }
     Mounts.map(v => playerInfo.mounts[v.Name] = true)

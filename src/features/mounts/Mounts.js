@@ -1,36 +1,84 @@
 import React from 'react'
-import { useSelector } from 'react-redux'
-import { selectPinned } from './mountsSlice'
-import { GridListTile, GridList, Avatar, Paper, Typography, Grid } from '@material-ui/core'
-import styles from './Mounts.module.css'
+import { useSelector, useDispatch } from 'react-redux'
+import { selectMounts, selectAppliedFilters, POSSIBLE_FILTERS, selectShowMounts } from './mountsSlice'
+import { toggleObtained, toggleFilter } from "./mountsSlice"
+import { GridListTile, GridList, Avatar, Paper, Typography, Grid, Chip, makeStyles } from '@material-ui/core'
+
+const useStyles = makeStyles({
+    padded: {
+        padding: '8pt',
+    },
+    mountResult: {
+        padding: '2pt',
+        marginBottom: '6pt',
+    },
+    filters: {
+        padding: '8pt',
+        marginBottom: '6pt',
+    },
+    chip: {
+        margin: '2p',
+    },
+    notObtained: {
+        filter: 'grayscale(100%)',
+    },
+    typography: {
+        display: 'box',
+        align: 'center'
+    }
+})
 
 export function Mounts() {
-    const pinned = useSelector(selectPinned)
+    const dispatch = useDispatch();
+    const isMountsReadyForDisplay = useSelector(selectShowMounts)
+    const mounts = useSelector(selectMounts)
+    const appliedFilters = useSelector(selectAppliedFilters)
 
-    return (
-        <div>
-            {pinned.map(player =>
-                <Paper className={styles.mountResult} elevation={3} key={player.playerId}>
-                    <Grid className={styles.padded} container direction="row" justify="flex-start" alignItems="center">
-                        <Grid item>
+    const classes = useStyles()
+
+    return isMountsReadyForDisplay ? <div>
+        <Paper className={classes.filters} elevation={3} >
+            <Grid item container xs={12} className={classes.chip} spacing={1} justify="space-around">
+                {POSSIBLE_FILTERS.map((filter) => (
+                    <Grid item key={filter}>
+                        <Chip
+                            color={appliedFilters.includes(filter) ? "primary" : "default"}
+                            onClick={() => dispatch(toggleFilter({ filter }))}
+                            label={filter}
+                        />
+                    </Grid>
+                ))}
+            </Grid>
+        </Paper>
+        {mounts.map(player =>
+            <Paper className={classes.mountResult} elevation={3} key={player.playerId}>
+                <Grid className={classes.padded} container direction="row" justify="flex-start" alignItems="center" alignContent="center">
+                    <Grid container item lg={1} direction="column" alignItems="center">
+                        <Grid item xs={12}>
                             <Avatar src={player.icon}>
                                 {player.name}
                             </Avatar>
                         </Grid>
-                        <Grid item style={({marginLeft: "8pt"})}>
-                            <Typography variant="h6">{player.name}</Typography>
+                        <Grid item xs={12} >
+                            <Typography component='div' variant="caption" className={classes.typography}>{player.name}</Typography>
                         </Grid>
                     </Grid>
-                    <GridList cellHeight="auto" cols={0} spacing={6}>
-                        {player.mounts.map(({ icon, name, obtained }) => (
-                            <GridListTile className={obtained ? styles.obtained : styles.notObtained} key={name}>
-                                <Avatar variant="rounded" src={icon} alt={`${name} icon`} />
-                                {name}
-                            </GridListTile>
-                        ))}
-                    </GridList>
-                </Paper>
-            )}
-        </div>
-    )
+                    <Grid item lg={11}>
+                        <GridList cellHeight="auto" cols={0} spacing={6}>
+                            {player.mounts.map(({ icon, name, obtained, id: mountId }) => (
+                                <GridListTile
+                                    onClick={() => dispatch(toggleObtained({ playerId: player.playerId, mountId }))}
+                                    className={obtained ? classes.obtained : classes.notObtained}
+                                    key={name}>
+                                    <Avatar variant="rounded" src={icon} alt={`${name} icon`} />
+                                    {name}
+                                </GridListTile>
+                            ))}
+                        </GridList>
+                    </Grid>
+                </Grid>
+            </Paper>
+        )}
+    </div>
+        : <div />
 }

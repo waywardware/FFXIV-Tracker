@@ -1,22 +1,45 @@
 import React from 'react'
-import styles from './PlayerBadge.module.css'
-import { Avatar, Card, CardHeader, IconButton } from '@material-ui/core';
-import { Add, Remove } from '@material-ui/icons'
+import { Avatar, Paper, ButtonBase, Typography, Grid, makeStyles } from '@material-ui/core';
+
+const useStyles = makeStyles({
+    root: {
+        flexGrow: 1,
+        width: '100%',
+        display: 'flex',
+    },
+    playerBadge: {
+
+        width: '100%',
+        backgroundColor: 'aliceblue',
+        marginTop: '8pt',
+        padding: '8pt',
+    }
+})
 
 export default function PlayerBadge(props) {
+    const styles = useStyles()
 
     return (
-        <Card className={styles.playerBadge} onClick={() => props.showMounts()}>
-            <CardHeader
-                avatar={<Avatar alt={props.name} src={props.icon} />}
-                title={props.name}
-                subheader={props.server}
-                action={
-                    <IconButton onClick={() => props.togglePin()}>
-                        {(props.isPinned) ? <Remove/> : <Add/>}
-                    </IconButton>
-                }
-            />
-        </Card>
+
+        <ButtonBase
+            focusRipple
+            className={styles.root}
+        >
+            <Paper className={styles.playerBadge} onClick={() => props.onClick()}>
+                <Grid container spacing={1} direction="row">
+                    <Grid item xs={1}>
+                        <Avatar alt={props.name} src={props.icon} />
+                    </Grid>
+                    <Grid item container xs={11}>
+                        <Grid item xs={12}>
+                            <Typography variant="button">{props.name}</Typography>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Typography variant="caption">{props.server}</Typography>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Paper>
+        </ButtonBase>
     )
 }
