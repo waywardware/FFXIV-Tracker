@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { playerSearchRequest, playerSearchSuccess } from '../../app/xivapi';
+import { transformSearchFromXIVApi } from '../../app/xivapi';
 
 export const SEARCHING = 0
 export const DONE = 1
@@ -15,51 +15,23 @@ export const searchSlice = createSlice({
         },
         results: []
     },
-    extraReducers: {
-        [playerSearchRequest]: (state, action) => {
+    reducers: {
+        playerSearchRequest: (state, action) => {
             state.value = action.meta.name;
         },
-        [playerSearchSuccess]: (state, action) => {
+        playerSearchSuccess: (state, action) => {
             if (state.value !== action.meta.name) return;
-            let payload = transformForSearch(action.payload)
+            let payload = transformSearchFromXIVApi(action.payload)
             state.page = payload.page
             state.results = payload.results
         }
     }
 })
 
-const transformForSearch = (payload) =>
-    ({
-        page: {
-            current: payload.Pagination.Page,
-            total: payload.Pagination.PageTotal,
-        },
-        results: payload.Results.map(r => ({
-            icon: r.Avatar,
-            playerId: r.ID,
-            name: r.Name,
-            server: r.Server,
-        }))
-    })
-
 export const selectSearch = state => state.search.value
-export const selectResults = state => {
-    let results = state.search.results
-        .filter(result => !state.player.players[result.playerId] || !state.player.players[result.playerId].isPinned)
-
-    let pinned = Object.values(state.player.players)
-        .filter(player => player.isPinned)
-        .map(player => {
-            return Object.assign({}, player.character, {
-                icon,
-                server,
-                name,
-                isPinned: player.isPinned
-            })
-        })
-
-    return results
-}
+export const selectResults = state => state.search.results
 export const selectPage = state => state.search.page
+
+export const { playerSearchRequest, playerSearchSuccess } = searchSlice.actions 
 
 export default searchSlice.reducer

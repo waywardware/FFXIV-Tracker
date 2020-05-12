@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { fetchAllMountsRequest, fetchAllMountsSuccess } from '../../app/ffxivcollect'
+import { transformMIMOFromXIVApi } from '../../app/xivapi';
 
 export const UNLOADED = 1;
 export const LOADING = 2;
@@ -25,10 +25,12 @@ export const mountsSlice = createSlice({
     name: 'mounts',
     initialState: {
         allMountData: UNLOADED,
+        status: UNLOADED,
         forcedObtained: {},
         playerId: 0,
         appliedFilters: ["Trial"],
-        allMounts: [],
+        mountMap: {},
+        allMounts: {},
     },
     reducers: {
         toggleFilter: ({ appliedFilters }, action) => {
@@ -38,29 +40,45 @@ export const mountsSlice = createSlice({
             index > -1 ? appliedFilters.splice(index, 1) :
                 appliedFilters.push(filter)
         },
-        toggleObtained: ({ forcedObtained }, action) => {
+        toggleObtained: ({ forcedObtained, mountMap }, action) => {
             let { playerId, mountId } = action.payload
             if (!forcedObtained[playerId]) forcedObtained[playerId] = []
 
             let index = forcedObtained[playerId].indexOf(mountId)
             index > -1 ? forcedObtained[playerId].splice(index, 1) :
                 forcedObtained[playerId].push(mountId)
-        }
-    },
-    extraReducers: {
-        [fetchAllMountsRequest]: (state) => {
+        },
+        fetchAllMountsRequest: (state) => {
             state.allMountData = LOADING
         },
-        [fetchAllMountsSuccess]: (state, action) => {
+        fetchAllMountsSuccess: (state, action) => {
             state.allMounts = action.payload.results
                 .sort((a, b) => a.id - b.id)
+                .reduce((acc, val) => Object.assign({}, acc, { [val.id]: val }), {})
             state.allMountData = LOADED
+        },
+        playerInfoRequest: (state, action) => {
+            state.status = LOADING
+        },
+        playerInfoSuccess: (state, action) => {
+            state.status = LOADED
+            let { mounts, character } = transformMIMOFromXIVApi(action.payload)
+            let mountIds = Object.keys(mounts).map(mount => {
+                let detailed = state.allMounts[mount] ||
+                    Object.values(state.allMounts).find(({ name }) => (name.includes(mount) || mount.includes(name)))
+                return detailed.id
+            })
+            state.mountMap[character.playerId] = {
+                name: character.name,
+                playerId: character.playerId,
+                icon: character.icon,
+                server: character.server,
+                mounts: mountIds
+            }
         }
     },
 })
 
-const filterByPinnedPlayers = player => player.isPinned
-const filterByPlayersWithMounts = player => !!player.mounts
 const filterByAppliedFilters = appliedFilters => mount => {
     if (appliedFilters.length === 0) return true;
     return appliedFilters
@@ -68,34 +86,34 @@ const filterByAppliedFilters = appliedFilters => mount => {
             .find(mountsSource => askedSourceType === mountsSource.type))
 }
 
-const mapFlat = ({ character: { playerId, name, icon, server }, mounts }) => ({ playerId, name, icon, server, mounts })
+export const selectMounts = state => {
+    let allMounts = state.mounts.allMounts
+    let mountMap = state.mounts.mountMap
+    let forcedObtained = state.mounts.forcedObtained
+    let joinedMounts = []
 
-const mapMountData = (allMounts, forcedObtained) => player => Object.assign({}, player, {
-    mounts: allMounts.map((mount) => {
-        let obtained = player.mounts[mount.name] ||
-            !!Object.keys(player.mounts).find(playersMountName => (playersMountName.includes(mount.name) || mount.name.includes(playersMountName)))
+    Object.values(mountMap).forEach(({ name, playerId, icon, server, mounts }) => {
+        let allMountsCopy = JSON.parse(JSON.stringify(allMounts))
+        mounts
+            .concat((forcedObtained[playerId]) ? forcedObtained[playerId] : [])
+            .forEach(mountId => {
+                allMountsCopy[mountId].obtained = true
+            })
 
-        return Object.assign({}, mount, {
-            obtained: obtained
-                || (forcedObtained[player.playerId] && forcedObtained[player.playerId].includes(mount.id))
+        joinedMounts.push({
+            name,
+            playerId,
+            icon,
+            server,
+            mounts: Object.values(allMountsCopy).filter(filterByAppliedFilters(state.mounts.appliedFilters))
         })
     })
-})
 
-const mapAppliedFilters = appliedFilters => player => Object.assign({}, player, {
-    mounts: player.mounts.filter(filterByAppliedFilters(appliedFilters))
-})
-
-export const selectPinned = state => Object.values(state.player.players)
-    .filter(filterByPinnedPlayers)
-    .filter(filterByPlayersWithMounts)
-    .map(mapFlat)
-    .map(mapMountData(state.mounts.allMounts, state.mounts.forcedObtained))
-    .map(mapAppliedFilters(state.mounts.appliedFilters))
-    .reduce((acc, player) => Object.assign({}, acc, { [player.playerId]: player }), {})
-
+    return joinedMounts
+}
 export const selectAppliedFilters = state => state.mounts.appliedFilters
+export const selectShowMounts = state => Object.values(state.mounts.mountMap).length > 0
 
-export const { toggleObtained, toggleFilter } = mountsSlice.actions
+export const { toggleFilter, toggleObtained, fetchAllMountsRequest, fetchAllMountsSuccess, playerInfoRequest, playerInfoSuccess } = mountsSlice.actions;
 
 export default mountsSlice.reducer

@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import PlayerBadge from '../../components/playerBadge/PlayerBadge'
-import { toggledPin } from '../player/playerSlice'
 import { selectResults, selectSearch, selectPage } from './searchSlice';
 import { searchForPlayer, getPlayerMountInfo } from '../../app/xivapi';
 import { fetchAllMounts } from '../../app/ffxivcollect'
@@ -29,9 +28,8 @@ export function Search() {
         }, 500)
     }
 
-    let togglePlayerPin = playerId => {
-        dispatch(toggledPin({ playerId }))
-        dispatch(getPlayerMountInfo({ playerId, forPinned: true }))
+    let pinPlayer = playerId => {
+        dispatch(getPlayerMountInfo({ playerId }))
     }
 
     function searchResults(results) {
@@ -45,7 +43,7 @@ export function Search() {
                             server={player.server}
                             icon={player.icon}
                             isPinned={player.isPinned}
-                            togglePin={() => togglePlayerPin(player.playerId)}
+                            onClick={() => pinPlayer(player.playerId)}
                         />
                     ))}
 
