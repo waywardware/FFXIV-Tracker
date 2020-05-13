@@ -11,8 +11,11 @@ const useStyles = makeStyles({
 
         width: '100%',
         backgroundColor: 'aliceblue',
-        marginTop: '8pt',
+        marginBottom: '6pt',
         padding: '8pt',
+    },
+    name: {
+        paddingLeft: "8pt"
     }
 })
 
@@ -26,16 +29,16 @@ export default function PlayerBadge(props) {
             className={styles.root}
         >
             <Paper className={styles.playerBadge} onClick={() => props.onClick()}>
-                <Grid container spacing={1} direction="row">
-                    <Grid item xs={1}>
+                <Grid container direction="row">
+                    <Grid item xs={2}>
                         <Avatar alt={props.name} src={props.icon} />
                     </Grid>
-                    <Grid item container xs={11}>
+                    <Grid className={styles.name} item container xs={10} alignItems="flex-start" alignContent="flex-start">
                         <Grid item xs={12}>
-                            <Typography variant="button">{props.name}</Typography>
+                            <Typography align="left" noWrap={true} variant="button">{props.name}</Typography>
                         </Grid>
-                        <Grid item xs={12}>
-                            <Typography variant="caption">{props.server}</Typography>
+                        <Grid item xs={12} alignItems="flex-start">
+                            <Typography align="left" noWrap={true} variant="caption">{props.server}</Typography>
                         </Grid>
                     </Grid>
                 </Grid>

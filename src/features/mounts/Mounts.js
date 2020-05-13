@@ -1,8 +1,9 @@
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { selectMounts, selectAppliedFilters, POSSIBLE_FILTERS, selectShowMounts } from './mountsSlice'
+import { selectMounts, selectAppliedFilters, POSSIBLE_FILTERS, selectShowMounts, selectAreMountsLoading } from './mountsSlice'
 import { toggleObtained, toggleFilter } from "./mountsSlice"
-import { GridListTile, GridList, Avatar, Paper, Typography, Grid, Chip, makeStyles } from '@material-ui/core'
+import { GridListTile, GridList, Avatar, Paper, Typography, Grid, Chip, makeStyles, Tooltip } from '@material-ui/core'
+import { ProgressBar } from '../../components/progressBar/ProgressBar'
 
 const useStyles = makeStyles({
     padded: {
@@ -17,26 +18,27 @@ const useStyles = makeStyles({
         marginBottom: '6pt',
     },
     chip: {
-        margin: '2p',
     },
     notObtained: {
         filter: 'grayscale(100%)',
     },
     typography: {
+        padding: "2pt",
         display: 'box',
         align: 'center'
-    }
+    },
 })
 
 export function Mounts() {
     const dispatch = useDispatch();
     const isMountsReadyForDisplay = useSelector(selectShowMounts)
+    const isLoading = useSelector(selectAreMountsLoading)
     const mounts = useSelector(selectMounts)
     const appliedFilters = useSelector(selectAppliedFilters)
 
     const classes = useStyles()
 
-    return isMountsReadyForDisplay ? <div>
+    return <div>
         <Paper className={classes.filters} elevation={3} >
             <Grid item container xs={12} className={classes.chip} spacing={1} justify="space-around">
                 {POSSIBLE_FILTERS.map((filter) => (
@@ -50,35 +52,54 @@ export function Mounts() {
                 ))}
             </Grid>
         </Paper>
-        {mounts.map(player =>
+        <ProgressBar isLoading={isLoading} />
+        {isMountsReadyForDisplay ? mounts.map(player =>
             <Paper className={classes.mountResult} elevation={3} key={player.playerId}>
                 <Grid className={classes.padded} container direction="row" justify="flex-start" alignItems="center" alignContent="center">
-                    <Grid container item lg={1} direction="column" alignItems="center">
+                    <Grid container item lg={1} md={2} direction="column" alignItems="center">
                         <Grid item xs={12}>
                             <Avatar src={player.icon}>
                                 {player.name}
                             </Avatar>
                         </Grid>
                         <Grid item xs={12} >
-                            <Typography component='div' variant="caption" className={classes.typography}>{player.name}</Typography>
+                            <Typography component='div' variant="caption" align="center" className={classes.typography}>{player.name}</Typography>
                         </Grid>
                     </Grid>
-                    <Grid item lg={11}>
+                    <Grid item lg={11} md={10}>
                         <GridList cellHeight="auto" cols={0} spacing={6}>
-                            {player.mounts.map(({ icon, name, obtained, id: mountId }) => (
-                                <GridListTile
-                                    onClick={() => dispatch(toggleObtained({ playerId: player.playerId, mountId }))}
-                                    className={obtained ? classes.obtained : classes.notObtained}
-                                    key={name}>
-                                    <Avatar variant="rounded" src={icon} alt={`${name} icon`} />
-                                    {name}
-                                </GridListTile>
+                            {player.mounts.map(({ icon, name, obtained, id: mountId, sources }) => (
+                                <Tooltip
+                                    key={mountId}
+                                    title={
+                                        <React.Fragment>
+                                            <Grid container direction="column" alignItems="center" alignContent="center">
+                                                <Grid item>
+                                                    <Typography variant="body1" align="center">{name}</Typography>
+                                                </Grid>
+                                                {sources.map(({ text }, index) =>
+                                                    <Grid item key={index}>
+                                                        <Typography variant="caption" align="center" >{text}</Typography>
+                                                    </Grid>
+                                                )}
+                                            </Grid>
+                                        </React.Fragment>
+                                    }
+                                >
+                                    <GridListTile
+                                        onClick={() => dispatch(toggleObtained({ playerId: player.playerId, mountId }))}
+                                        className={obtained ? classes.obtained : classes.notObtained}
+                                        key={name}>
+                                        <Avatar variant="rounded" src={icon} alt={`${name} icon`} />
+                                        {name}
+                                    </GridListTile>
+                                </Tooltip>
                             ))}
                         </GridList>
                     </Grid>
                 </Grid>
-            </Paper>
-        )}
-    </div>
-        : <div />
+            </Paper >
+        ) : <div />
+        }
+    </div >
 }
