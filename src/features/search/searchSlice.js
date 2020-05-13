@@ -17,6 +17,7 @@ export const searchSlice = createSlice({
     },
     reducers: {
         playerSearchRequest: (state, action) => {
+            state.status = SEARCHING
             state.value = action.meta.name;
         },
         playerSearchSuccess: (state, action) => {
@@ -24,6 +25,7 @@ export const searchSlice = createSlice({
             let payload = transformSearchFromXIVApi(action.payload)
             state.page = payload.page
             state.results = payload.results
+            state.status = DONE
         }
     }
 })
@@ -31,7 +33,8 @@ export const searchSlice = createSlice({
 export const selectSearch = state => state.search.value
 export const selectResults = state => state.search.results
 export const selectPage = state => state.search.page
+export const selectIsLoading = state => state.search.status === SEARCHING
 
-export const { playerSearchRequest, playerSearchSuccess } = searchSlice.actions 
+export const { playerSearchRequest, playerSearchSuccess } = searchSlice.actions
 
 export default searchSlice.reducer

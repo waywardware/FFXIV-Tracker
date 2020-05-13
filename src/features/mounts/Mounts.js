@@ -1,8 +1,9 @@
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { selectMounts, selectAppliedFilters, POSSIBLE_FILTERS, selectShowMounts } from './mountsSlice'
+import { selectMounts, selectAppliedFilters, POSSIBLE_FILTERS, selectShowMounts, selectAreMountsLoading } from './mountsSlice'
 import { toggleObtained, toggleFilter } from "./mountsSlice"
-import { GridListTile, GridList, Avatar, Paper, Typography, Grid, Chip, makeStyles } from '@material-ui/core'
+import { GridListTile, GridList, Avatar, Paper, Typography, Grid, Chip, makeStyles, LinearProgress } from '@material-ui/core'
+import { ProgressBar } from '../../components/progressBar/ProgressBar'
 
 const useStyles = makeStyles({
     padded: {
@@ -17,7 +18,6 @@ const useStyles = makeStyles({
         marginBottom: '6pt',
     },
     chip: {
-        margin: '2p',
     },
     notObtained: {
         filter: 'grayscale(100%)',
@@ -25,18 +25,19 @@ const useStyles = makeStyles({
     typography: {
         display: 'box',
         align: 'center'
-    }
+    },
 })
 
 export function Mounts() {
     const dispatch = useDispatch();
     const isMountsReadyForDisplay = useSelector(selectShowMounts)
+    const isLoading = useSelector(selectAreMountsLoading)
     const mounts = useSelector(selectMounts)
     const appliedFilters = useSelector(selectAppliedFilters)
 
     const classes = useStyles()
 
-    return isMountsReadyForDisplay ? <div>
+    return <div>
         <Paper className={classes.filters} elevation={3} >
             <Grid item container xs={12} className={classes.chip} spacing={1} justify="space-around">
                 {POSSIBLE_FILTERS.map((filter) => (
@@ -50,7 +51,8 @@ export function Mounts() {
                 ))}
             </Grid>
         </Paper>
-        {mounts.map(player =>
+        <ProgressBar isLoading={isLoading} />
+        {isMountsReadyForDisplay ? mounts.map(player =>
             <Paper className={classes.mountResult} elevation={3} key={player.playerId}>
                 <Grid className={classes.padded} container direction="row" justify="flex-start" alignItems="center" alignContent="center">
                     <Grid container item lg={1} direction="column" alignItems="center">
@@ -78,7 +80,6 @@ export function Mounts() {
                     </Grid>
                 </Grid>
             </Paper>
-        )}
+        ) : <div />}
     </div>
-        : <div />
 }

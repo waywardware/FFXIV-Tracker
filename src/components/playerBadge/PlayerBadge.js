@@ -11,7 +11,7 @@ const useStyles = makeStyles({
 
         width: '100%',
         backgroundColor: 'aliceblue',
-        marginTop: '8pt',
+        marginBottom: '6pt',
         padding: '8pt',
     }
 })

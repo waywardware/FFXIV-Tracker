@@ -61,7 +61,6 @@ export const mountsSlice = createSlice({
             state.status = LOADING
         },
         playerInfoSuccess: (state, action) => {
-            state.status = LOADED
             let { mounts, character } = transformMIMOFromXIVApi(action.payload)
             let mountIds = Object.keys(mounts).map(mount => {
                 let detailed = state.allMounts[mount] ||
@@ -75,6 +74,7 @@ export const mountsSlice = createSlice({
                 server: character.server,
                 mounts: mountIds
             }
+            state.status = LOADED
         }
     },
 })
@@ -113,6 +113,7 @@ export const selectMounts = state => {
 }
 export const selectAppliedFilters = state => state.mounts.appliedFilters
 export const selectShowMounts = state => Object.values(state.mounts.mountMap).length > 0
+export const selectAreMountsLoading = state => state.mounts.status === LOADING
 
 export const { toggleFilter, toggleObtained, fetchAllMountsRequest, fetchAllMountsSuccess, playerInfoRequest, playerInfoSuccess } = mountsSlice.actions;
 

@@ -3,11 +3,8 @@
     width: 100%;
 }
 
-.pinned {
-    margin: 5pt;
-}
-
 .searchField {
     width: 100%;
-    padding: 6pt;
+    padding: 5pt;
+    margin-bottom: 6pt;
 }
