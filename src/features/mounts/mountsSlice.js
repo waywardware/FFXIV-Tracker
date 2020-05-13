@@ -27,8 +27,8 @@ export const mountsSlice = createSlice({
         allMountData: UNLOADED,
         status: UNLOADED,
         forcedObtained: {},
-        playerId: 0,
         appliedFilters: ["Trial"],
+        players: [],
         mountMap: {},
         allMounts: {},
     },
@@ -67,6 +67,10 @@ export const mountsSlice = createSlice({
                     Object.values(state.allMounts).find(({ name }) => (name.includes(mount) || mount.includes(name)))
                 return detailed.id
             })
+            let index = state.players.indexOf(character.playerId)
+            if(index === -1) {
+                state.players.push(character.playerId)
+            }
             state.mountMap[character.playerId] = {
                 name: character.name,
                 playerId: character.playerId,
@@ -90,9 +94,9 @@ export const selectMounts = state => {
     let allMounts = state.mounts.allMounts
     let mountMap = state.mounts.mountMap
     let forcedObtained = state.mounts.forcedObtained
-    let joinedMounts = []
 
-    Object.values(mountMap).forEach(({ name, playerId, icon, server, mounts }) => {
+    return state.mounts.players.map(playerId => {
+        let { name, icon, server, mounts } = mountMap[playerId]
         let allMountsCopy = JSON.parse(JSON.stringify(allMounts))
         mounts
             .concat((forcedObtained[playerId]) ? forcedObtained[playerId] : [])
@@ -100,7 +104,7 @@ export const selectMounts = state => {
                 allMountsCopy[mountId].obtained = true
             })
 
-        joinedMounts.push({
+        return ({
             name,
             playerId,
             icon,
@@ -108,8 +112,6 @@ export const selectMounts = state => {
             mounts: Object.values(allMountsCopy).filter(filterByAppliedFilters(state.mounts.appliedFilters))
         })
     })
-
-    return joinedMounts
 }
 export const selectAppliedFilters = state => state.mounts.appliedFilters
 export const selectShowMounts = state => Object.values(state.mounts.mountMap).length > 0

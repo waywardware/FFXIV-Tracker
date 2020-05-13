@@ -23,6 +23,7 @@ const useStyles = makeStyles({
         filter: 'grayscale(100%)',
     },
     typography: {
+        padding: "2pt",
         display: 'box',
         align: 'center'
     },
@@ -55,25 +56,33 @@ export function Mounts() {
         {isMountsReadyForDisplay ? mounts.map(player =>
             <Paper className={classes.mountResult} elevation={3} key={player.playerId}>
                 <Grid className={classes.padded} container direction="row" justify="flex-start" alignItems="center" alignContent="center">
-                    <Grid container item lg={1} direction="column" alignItems="center">
+                    <Grid container item lg={1} md={2} direction="column" alignItems="center">
                         <Grid item xs={12}>
                             <Avatar src={player.icon}>
                                 {player.name}
                             </Avatar>
                         </Grid>
                         <Grid item xs={12} >
-                            <Typography component='div' variant="caption" className={classes.typography}>{player.name}</Typography>
+                            <Typography component='div' variant="caption" align="center" className={classes.typography}>{player.name}</Typography>
                         </Grid>
                     </Grid>
-                    <Grid item lg={11}>
+                    <Grid item lg={11} md={10}>
                         <GridList cellHeight="auto" cols={0} spacing={6}>
                             {player.mounts.map(({ icon, name, obtained, id: mountId, sources }) => (
                                 <Tooltip
+                                    key={mountId}
                                     title={
                                         <React.Fragment>
-                                            <Typography>{name}</Typography>
-                                            {sources.map(({ text }) =>
-                                                <Typography>{text}</Typography>)}
+                                            <Grid container direction="column" alignItems="center" alignContent="center">
+                                                <Grid item>
+                                                    <Typography variant="body1" align="center">{name}</Typography>
+                                                </Grid>
+                                                {sources.map(({ text }, index) =>
+                                                    <Grid item key={index}>
+                                                        <Typography variant="caption" align="center" >{text}</Typography>
+                                                    </Grid>
+                                                )}
+                                            </Grid>
                                         </React.Fragment>
                                     }
                                 >
@@ -89,7 +98,8 @@ export function Mounts() {
                         </GridList>
                     </Grid>
                 </Grid>
-            </Paper>
-        ) : <div />}
-    </div>
+            </Paper >
+        ) : <div />
+        }
+    </div >
 }
