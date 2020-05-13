@@ -2,7 +2,7 @@ import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { selectMounts, selectAppliedFilters, POSSIBLE_FILTERS, selectShowMounts, selectAreMountsLoading } from './mountsSlice'
 import { toggleObtained, toggleFilter } from "./mountsSlice"
-import { GridListTile, GridList, Avatar, Paper, Typography, Grid, Chip, makeStyles, LinearProgress } from '@material-ui/core'
+import { GridListTile, GridList, Avatar, Paper, Typography, Grid, Chip, makeStyles, Tooltip } from '@material-ui/core'
 import { ProgressBar } from '../../components/progressBar/ProgressBar'
 
 const useStyles = makeStyles({
@@ -67,14 +67,24 @@ export function Mounts() {
                     </Grid>
                     <Grid item lg={11}>
                         <GridList cellHeight="auto" cols={0} spacing={6}>
-                            {player.mounts.map(({ icon, name, obtained, id: mountId }) => (
-                                <GridListTile
-                                    onClick={() => dispatch(toggleObtained({ playerId: player.playerId, mountId }))}
-                                    className={obtained ? classes.obtained : classes.notObtained}
-                                    key={name}>
-                                    <Avatar variant="rounded" src={icon} alt={`${name} icon`} />
-                                    {name}
-                                </GridListTile>
+                            {player.mounts.map(({ icon, name, obtained, id: mountId, sources }) => (
+                                <Tooltip
+                                    title={
+                                        <React.Fragment>
+                                            <Typography>{name}</Typography>
+                                            {sources.map(({ text }) =>
+                                                <Typography>{text}</Typography>)}
+                                        </React.Fragment>
+                                    }
+                                >
+                                    <GridListTile
+                                        onClick={() => dispatch(toggleObtained({ playerId: player.playerId, mountId }))}
+                                        className={obtained ? classes.obtained : classes.notObtained}
+                                        key={name}>
+                                        <Avatar variant="rounded" src={icon} alt={`${name} icon`} />
+                                        {name}
+                                    </GridListTile>
+                                </Tooltip>
                             ))}
                         </GridList>
                     </Grid>
