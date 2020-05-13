@@ -35,7 +35,7 @@ export default function PlayerBadge(props) {
                     </Grid>
                     <Grid className={styles.name} item container xs={10} alignItems="flex-start" alignContent="flex-start">
                         <Grid item xs={12}>
-                            <Typography width="100%" align="left" noWrap={true} variant="button">{props.name}</Typography>
+                            <Typography align="left" noWrap={true} variant="button">{props.name}</Typography>
                         </Grid>
                         <Grid item xs={12} alignItems="flex-start">
                             <Typography align="left" noWrap={true} variant="caption">{props.server}</Typography>
