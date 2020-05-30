@@ -1,17 +1,18 @@
 import React from 'react';
 import './App.css';
-import { Route, HashRouter } from 'react-router-dom';
+import { Route, BrowserRouter as Router } from 'react-router-dom';
 import MountFarmPage from './pages/MountFarmPage';
 
 function App() {
+
   return (
-    <HashRouter>
+    <Router>
       <div>
         <div className="content">
-          <Route path="/" component={MountFarmPage} />
+          <Route exact path="/" component={MountFarmPage} />
         </div>
       </div>
-    </HashRouter>
+    </Router>
   );
 }
 

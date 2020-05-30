@@ -58,7 +58,20 @@ export const mountsSlice = createSlice({
             state.allMountData = LOADED
         },
         playerInfoRequest: (state, action) => {
+            const { playerId } = action.meta
+
             state.status = LOADING
+
+            let index = state.players.indexOf(playerId)
+            if (index === -1) {
+                state.players.push(playerId)
+            }
+
+            // Update url parameters
+            const params = new URLSearchParams(window.location.search)
+            params.set('pid', state.players.join(','))
+            window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}`)
+            // end of Update url parameters
         },
         playerInfoSuccess: (state, action) => {
             let { mounts, character } = transformMIMOFromXIVApi(action.payload)
@@ -67,10 +80,6 @@ export const mountsSlice = createSlice({
                     Object.values(state.allMounts).find(({ name }) => (name.includes(mount) || mount.includes(name)))
                 return detailed.id
             })
-            let index = state.players.indexOf(character.playerId)
-            if(index === -1) {
-                state.players.push(character.playerId)
-            }
             state.mountMap[character.playerId] = {
                 name: character.name,
                 playerId: character.playerId,
@@ -78,7 +87,7 @@ export const mountsSlice = createSlice({
                 server: character.server,
                 mounts: mountIds
             }
-            state.status = LOADED
+            state.status = Object.values(state.mountMap).length === state.players.length ? LOADED : state.status
         }
     },
 })
@@ -95,23 +104,25 @@ export const selectMounts = state => {
     let mountMap = state.mounts.mountMap
     let forcedObtained = state.mounts.forcedObtained
 
-    return state.mounts.players.map(playerId => {
-        let { name, icon, server, mounts } = mountMap[playerId]
-        let allMountsCopy = JSON.parse(JSON.stringify(allMounts))
-        mounts
-            .concat((forcedObtained[playerId]) ? forcedObtained[playerId] : [])
-            .forEach(mountId => {
-                allMountsCopy[mountId].obtained = true
-            })
+    return state.mounts.players
+        .filter(playerId => !!mountMap[playerId])
+        .map(playerId => {
+            let { name, icon, server, mounts } = mountMap[playerId]
+            let allMountsCopy = JSON.parse(JSON.stringify(allMounts))
+            mounts
+                .concat((forcedObtained[playerId]) ? forcedObtained[playerId] : [])
+                .forEach(mountId => {
+                    allMountsCopy[mountId].obtained = true
+                })
 
-        return ({
-            name,
-            playerId,
-            icon,
-            server,
-            mounts: Object.values(allMountsCopy).filter(filterByAppliedFilters(state.mounts.appliedFilters))
+            return ({
+                name,
+                playerId,
+                icon,
+                server,
+                mounts: Object.values(allMountsCopy).filter(filterByAppliedFilters(state.mounts.appliedFilters))
+            })
         })
-    })
 }
 export const selectAppliedFilters = state => state.mounts.appliedFilters
 export const selectShowMounts = state => Object.values(state.mounts.mountMap).length > 0
