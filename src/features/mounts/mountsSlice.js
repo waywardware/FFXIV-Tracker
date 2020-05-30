@@ -127,6 +127,7 @@ export const selectMounts = state => {
 export const selectAppliedFilters = state => state.mounts.appliedFilters
 export const selectShowMounts = state => Object.values(state.mounts.mountMap).length > 0
 export const selectAreMountsLoading = state => state.mounts.status === LOADING
+export const selectPlayers = state => state.mounts.players
 
 export const { toggleFilter, toggleObtained, fetchAllMountsRequest, fetchAllMountsSuccess, playerInfoRequest, playerInfoSuccess } = mountsSlice.actions;
 
