@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
 
     searchField: {
         width: '100%',
-        padding: '5pt',
+        padding: '2pt',
         marginBottom: '6pt',
         display: 'flex'
     },
