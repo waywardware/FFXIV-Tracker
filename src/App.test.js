@@ -1,6 +1,6 @@
 import React from 'react';
 import expect from 'expect'
-import { render, getAllByPlaceholderText, getAllByLabelText, getByPlaceholderText, findAllByPlaceholderText } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { screen } from '@testing-library/dom'
 import { Provider } from 'react-redux';
 import store from './app/store';
