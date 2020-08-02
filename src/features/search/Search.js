@@ -77,7 +77,10 @@ export function Search() {
     return (
         <div>
             <Paper elevation={3} className={styles.searchField}>
-                <InputBase className={styles.input} onChange={event => value = event.target.value} onKeyUp={enterPressed} />
+                <InputBase className={styles.input}
+                    placeholder="Search..."
+                    onChange={event => value = event.target.value}
+                    onKeyUp={enterPressed} />
                 <IconButton aria-label="search" onClick={() => search(value)}>
                     <SearchIcon />
                 </IconButton>
