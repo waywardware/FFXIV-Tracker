@@ -4,9 +4,31 @@ import PlayerBadge from '../../components/playerBadge/PlayerBadge'
 import { selectResults, selectSearch, selectPage, selectIsLoading } from './searchSlice';
 import { searchForPlayer, getPlayerMountInfo } from '../../app/xivapi';
 import { fetchAllMounts } from '../../app/ffxivcollect'
-import { Paper, TextField } from '@material-ui/core';
-import styles from './Search.module.css'
+import { Paper, InputBase, makeStyles } from '@material-ui/core';
 import { ProgressBar } from '../../components/progressBar/ProgressBar';
+import SearchIcon from '@material-ui/icons/Search';
+import IconButton from '@material-ui/core/IconButton';
+
+const useStyles = makeStyles((theme) => ({
+    resultsList: {
+        height: '100%',
+        width: '100%',
+    },
+
+    searchField: {
+        width: '100%',
+        padding: '5pt',
+        marginBottom: '6pt',
+        display: 'flex'
+    },
+
+    input: {
+        marginLeft: theme.spacing(1),
+        flex: 1,
+    }
+}))
+
+var value = ''
 
 export function Search() {
     const dispatch = useDispatch();
@@ -15,19 +37,18 @@ export function Search() {
     const searchString = useSelector(selectSearch)
     const isLoading = useSelector(selectIsLoading)
 
-    var timeout
+    const styles = useStyles()
 
     useEffect(() => {
         dispatch(fetchAllMounts())
     }, [dispatch])
 
-    let onChange = event => {
-        let value = event.target.value
+    let search = value => dispatch(searchForPlayer(value))
 
-        if (timeout) clearTimeout(timeout)
-        timeout = setTimeout(() => {
-            dispatch(searchForPlayer(value))
-        }, 500)
+    let enterPressed = e => {
+        if (e.key === 'Enter' || e.keyCode === 13) {
+            search(value)
+        }
     }
 
     let pinPlayer = playerId => {
@@ -56,7 +77,13 @@ export function Search() {
     return (
         <div>
             <Paper elevation={3} className={styles.searchField}>
-                <TextField size="small" className={styles.searchField} label="Search..." onChange={onChange} variant="outlined" />
+                <InputBase className={styles.input}
+                    placeholder="Search..."
+                    onChange={event => value = event.target.value}
+                    onKeyUp={enterPressed} />
+                <IconButton aria-label="search" onClick={() => search(value)}>
+                    <SearchIcon />
+                </IconButton>
             </Paper>
             <ProgressBar isLoading={isLoading} />
             {searchResults(results, searchString, page.current)}
