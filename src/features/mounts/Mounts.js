@@ -6,11 +6,9 @@ import { GridListTile, GridList, Avatar, Paper, Typography, Grid, Chip, makeStyl
 import { ProgressBar } from '../../components/progressBar/ProgressBar'
 
 const useStyles = makeStyles({
-    padded: {
-        padding: '8pt',
-    },
     mountResult: {
-        padding: '2pt',
+        overflow: 'auto',
+        padding: '8pt',
         marginBottom: '6pt',
     },
     filters: {
@@ -27,6 +25,16 @@ const useStyles = makeStyles({
         display: 'box',
         align: 'center'
     },
+    mountCount: {
+        float: 'right',
+        color: 'gray',
+        marginTop: '2pt',
+        marginRight: '8pt'
+    },
+    mountList: {
+        marginTop: '4pt',
+        marginBottom: '4pt'
+    }
 })
 
 export function Mounts() {
@@ -55,7 +63,7 @@ export function Mounts() {
         <ProgressBar isLoading={isLoading} />
         {isMountsReadyForDisplay ? mounts.map(player =>
             <Paper className={classes.mountResult} elevation={3} key={player.playerId}>
-                <Grid className={classes.padded} container direction="row" justify="flex-start" alignItems="center" alignContent="center">
+                <Grid container direction="row" justify="flex-start" alignItems="center" alignContent="center">
                     <Grid container item lg={1} md={2} direction="column" alignItems="center">
                         <Grid item xs={12}>
                             <Avatar src={player.icon}>
@@ -66,7 +74,7 @@ export function Mounts() {
                             <Typography component='div' variant="caption" align="center" className={classes.typography}>{player.name}</Typography>
                         </Grid>
                     </Grid>
-                    <Grid item lg={11} md={10}>
+                    <Grid className={classes.mountList} item lg={11} md={10}>
                         <GridList cellHeight="auto" cols={0} spacing={6}>
                             {player.mounts.map(({ icon, name, obtained, id: mountId, sources }) => (
                                 <Tooltip
@@ -96,6 +104,11 @@ export function Mounts() {
                                 </Tooltip>
                             ))}
                         </GridList>
+                        <Typography
+                            variant="caption"
+                            className={classes.mountCount}>
+                            {player.mounts.filter(mount => mount.obtained).length}/{player.mounts.length}
+                        </Typography>
                     </Grid>
                 </Grid>
             </Paper >
