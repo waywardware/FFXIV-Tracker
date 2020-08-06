@@ -12,7 +12,7 @@ Currently the tracker is available at [ffxivtracker.com](https://www.ffxivtracke
 
 * Searching for player based on their name
 * Pinning players to a group
-* Sharing group through url parameters (`https://www.ffxivtracker.com/?pid=<player_id>%2C<second_player_id>`)
+* Sharing a group through url parameters (`https://www.ffxivtracker.com/?pid=<player_id>%2C<second_player_id>`)
 * Filtering player's mounts by how they're obtained (Raid, Trial, Achievement, etc.)
 * Manually checking off which mounts have been obtained (Since server-side updates can take a while)
 * Checking where/how mounts can be obtained via mouse over
@@ -23,7 +23,7 @@ Feel free contribute, all contributions are greatly appreciated. Create an issue
 
 ## Development 
 
-The core libraries used in this project are Rect, Redux, Redux-Api-Middleware, and Material UI. To keep package version consistency, please you `yarn`
+The core libraries used in this project are React, Redux, Redux-Api-Middleware, and Material UI. To keep package version consistency, please you `yarn`
 
 ### Getting started
 
