@@ -10,7 +10,6 @@ const useStyles = makeStyles({
     playerBadge: {
 
         width: '100%',
-        backgroundColor: 'aliceblue',
         marginBottom: '6pt',
         padding: '8pt',
     },

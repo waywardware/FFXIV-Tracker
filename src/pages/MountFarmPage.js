@@ -3,27 +3,25 @@ import { Search } from '../features/search/Search'
 import { Mounts } from '../features/mounts/Mounts'
 import { Grid } from '@material-ui/core'
 import './MountFarmPage.css';
-import queryString from 'query-string'
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { getPlayerMountInfo } from '../app/xivapi';
-import { selectPlayers } from '../features/mounts/mountsSlice';
 
 function MountFarmPage(props) {
 
   const dispatch = useDispatch()
-  const playerIds = useSelector(selectPlayers)
 
   useEffect(() => {
-    const values = queryString.parse(props.location.search)
-    if (!values.pid) return
-    const pids = values.pid
+    const params = new URLSearchParams(window.location.search)
+    const pids = params.get("pid")
+
+    if (!pids) return
+
     pids
       .split(',')
-      .filter(playerId => !playerIds.includes(playerId))
       .forEach(playerId => {
-        dispatch(getPlayerMountInfo({ playerId }))
+        dispatch(getPlayerMountInfo({ playerId: parseInt(playerId) }))
       });
-  }, [dispatch, props.location.search, playerIds])
+  }, [dispatch])
 
 
   return (

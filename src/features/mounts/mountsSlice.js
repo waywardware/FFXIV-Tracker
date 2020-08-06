@@ -25,7 +25,7 @@ export const mountsSlice = createSlice({
     name: 'mounts',
     initialState: {
         allMountData: UNLOADED,
-        status: UNLOADED,
+        playersLoading: 0,
         forcedObtained: {},
         appliedFilters: ["Trial"],
         players: [],
@@ -60,18 +60,14 @@ export const mountsSlice = createSlice({
         playerInfoRequest: (state, action) => {
             const { playerId } = action.meta
 
-            state.status = LOADING
+            state.playersLoading++
 
             let index = state.players.indexOf(playerId)
             if (index === -1) {
                 state.players.push(playerId)
             }
 
-            // Update url parameters
-            const params = new URLSearchParams(window.location.search)
-            params.set('pid', state.players.join(','))
-            window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}`)
-            // end of Update url parameters
+            updateUrlParameter(state.players)
         },
         playerInfoSuccess: (state, action) => {
             let { mounts, character } = transformMIMOFromXIVApi(action.payload)
@@ -87,10 +83,31 @@ export const mountsSlice = createSlice({
                 server: character.server,
                 mounts: mountIds
             }
-            state.status = Object.values(state.mountMap).length === state.players.length ? LOADED : state.status
+            state.playersLoading--
+        },
+        playerRemove: (state, action) => {
+            const { playerId } = action.payload
+
+            const index = state.players.indexOf(playerId)
+            if (index > -1) {
+                state.players.splice(index, 1)
+            }
+
+            updateUrlParameter(state.players)
         }
     },
 })
+
+const updateUrlParameter = (playerIds) => {
+    const params = new URLSearchParams(window.location.search)
+    if (playerIds.length > 0) {
+        params.set('pid', playerIds.join(','))
+    } else {
+        console.log(params)
+        params.delete('pid')
+    }
+    window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}`)
+}
 
 const filterByAppliedFilters = appliedFilters => mount => {
     if (appliedFilters.length === 0) return true;
@@ -126,9 +143,9 @@ export const selectMounts = state => {
 }
 export const selectAppliedFilters = state => state.mounts.appliedFilters
 export const selectShowMounts = state => Object.values(state.mounts.mountMap).length > 0
-export const selectAreMountsLoading = state => state.mounts.status === LOADING
+export const selectAreMountsLoading = state => state.mounts.playersLoading > 0
 export const selectPlayers = state => state.mounts.players
 
-export const { toggleFilter, toggleObtained, fetchAllMountsRequest, fetchAllMountsSuccess, playerInfoRequest, playerInfoSuccess } = mountsSlice.actions;
+export const { toggleFilter, toggleObtained, fetchAllMountsRequest, fetchAllMountsSuccess, playerInfoRequest, playerInfoSuccess, playerRemove } = mountsSlice.actions;
 
 export default mountsSlice.reducer
