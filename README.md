@@ -25,6 +25,11 @@ Feel free contribute, all contributions are greatly appreciated. Create an issue
 
 The core libraries used in this project are React, Redux, Redux-Api-Middleware, and Material UI. To keep package version consistency, please you `yarn`
 
+### Requirements
+
+* nodejs
+* yarn
+
 ### Getting started
 
 1. Clone the project: `git clone git@github.com:waywardware/FFXIV-Tracker.git`
