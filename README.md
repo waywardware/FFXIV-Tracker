@@ -23,7 +23,7 @@ Feel free contribute, all contributions are greatly appreciated. Create an issue
 
 ## Development 
 
-The core libraries used in this project are React, Redux, Redux-Api-Middleware, and Material UI. To keep package version consistency, please you `yarn`
+The core libraries used in this project are React, Redux, Redux-Api-Middleware, and Material UI. To keep package version consistency, please use `yarn`
 
 ### Requirements
 
