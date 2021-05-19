@@ -23,13 +23,13 @@ export function Mounts() {
             filterClicked={(filter) => dispatch(toggleFilter({ filter }))}
         />
         <ProgressBar isLoading={isLoading} />
-        {isMountsReadyForDisplay ? mounts.map(player =>
-            <CollectionList key={player.playerId}
-                playerName={player.name}
-                playerIcon={player.icon}
-                items={player.mounts}
-                closeClicked={() => dispatch(playerRemove({ playerId: player.playerId }))}
-                itemClicked={(itemId) => dispatch(toggleObtained({ playerId: player.playerId, mountId: itemId }))}
+        {isMountsReadyForDisplay ? mounts.map(({character, collection}) =>
+            <CollectionList key={character.playerId}
+                playerName={character.name}
+                playerIcon={character.icon}
+                items={collection}
+                closeClicked={() => dispatch(playerRemove({ playerId: character.playerId }))}
+                itemClicked={(itemId) => dispatch(toggleObtained({ playerId: character.playerId, mountId: itemId }))}
             />
         ) : <div />
         }

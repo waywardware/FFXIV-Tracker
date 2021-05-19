@@ -41,7 +41,7 @@ export interface CollectionListInput {
     playerName: string;
     playerIcon: string;
     items: Array<CollectionItem>;
-    itemClicked: (itemId: string) => void;
+    itemClicked: (itemId: number) => void;
     closeClicked: () => void;
 }
 

@@ -1,13 +1,13 @@
-import React, { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
-import PlayerBadge from '../../components/PlayerBadge'
-import { selectResults, selectSearch, selectPage, selectIsLoading } from './searchSlice';
-import { searchForPlayer, getPlayerMountInfo } from '../../app/xivapi';
-import { fetchAllMounts } from '../../app/ffxivcollect'
-import { Paper, InputBase, makeStyles } from '@material-ui/core';
-import { ProgressBar } from '../../components/ProgressBar';
-import SearchIcon from '@material-ui/icons/Search';
+import { InputBase, makeStyles, Paper } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
+import SearchIcon from '@material-ui/icons/Search';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchAllMinions, fetchAllMounts } from '../../app/ffxivcollect';
+import { searchForPlayer } from '../../app/xivapi';
+import PlayerBadge from '../../components/PlayerBadge';
+import { ProgressBar } from '../../components/ProgressBar';
+import { selectIsLoading, selectPage, selectResults, selectSearch } from './searchSlice';
 
 const useStyles = makeStyles((theme) => ({
     resultsList: {
@@ -30,7 +30,8 @@ const useStyles = makeStyles((theme) => ({
 
 var value = ''
 
-export function Search() {
+export function Search({ onPlayerPinned }) {
+
     const dispatch = useDispatch();
     const page = useSelector(selectPage)
     const results = useSelector(selectResults)
@@ -41,6 +42,7 @@ export function Search() {
 
     useEffect(() => {
         dispatch(fetchAllMounts())
+        dispatch(fetchAllMinions())
     }, [dispatch])
 
     let search = value => dispatch(searchForPlayer(value))
@@ -52,7 +54,7 @@ export function Search() {
     }
 
     let pinPlayer = playerId => {
-        dispatch(getPlayerMountInfo({ playerId }))
+        onPlayerPinned(playerId)
     }
 
     function searchResults(results) {

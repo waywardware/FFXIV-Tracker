@@ -3,7 +3,7 @@ export interface CollectionItem {
     icon: string;
     name: string;
     obtained: boolean;
-    itemId: string;
+    itemId: number;
     sources: Array<CollectionSource>;
 }
 
@@ -13,8 +13,8 @@ export interface CollectionSource {
 
 export interface PlayerInfo {
     character: Character;
-    mounts: Set<String>;
-    minions: Set<String>;
+    mounts: Set<string>;
+    minions: Set<string>;
 }
 
 export interface Character {
@@ -22,4 +22,9 @@ export interface Character {
     icon: string;
     name: string;
     server: string;
+} 
+
+export interface CharacterCollectionResult<T> {
+    character: Character
+    collection: Array<T>
 }

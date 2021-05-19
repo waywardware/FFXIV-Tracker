@@ -1,8 +1,8 @@
 import { createAction } from 'redux-api-middleware'
 import { playerSearchRequest, playerSearchSuccess } from '../features/search/searchSlice'
-import { playerInfoRequest, playerInfoSuccess } from '../features/mounts/mountsSlice'
 import { PlayerInfo } from '../models/PlayerInfoModels'
 import { PaginatedResult } from '../models/SearchModels'
+import { PlayerInfoRequest, PlayerInfoSuccess } from '../util/CollectionUtils'
 
 
 export const searchForPlayer = (name: any, page = 1) => createAction({
@@ -25,12 +25,13 @@ export const getPlayerMountInfo = ({ playerId, forPinned = false }: any) => crea
     method: 'GET',
     types: [
         {
-            type: playerInfoRequest.type,
-            meta: { playerId }
+            type: PlayerInfoRequest.type,
+            payload : {
+                playerId: playerId
+            }
         },
         {
-            type: playerInfoSuccess.type,
-            meta: { playerId }
+            type: PlayerInfoSuccess.type,
         },
         'FAILURE'
     ]
