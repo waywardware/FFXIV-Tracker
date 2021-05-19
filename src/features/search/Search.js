@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import PlayerBadge from '../../components/playerBadge/PlayerBadge'
+import PlayerBadge from '../../components/PlayerBadge'
 import { selectResults, selectSearch, selectPage, selectIsLoading } from './searchSlice';
 import { searchForPlayer, getPlayerMountInfo } from '../../app/xivapi';
 import { fetchAllMounts } from '../../app/ffxivcollect'
 import { Paper, InputBase, makeStyles } from '@material-ui/core';
-import { ProgressBar } from '../../components/progressBar/ProgressBar';
+import { ProgressBar } from '../../components/ProgressBar';
 import SearchIcon from '@material-ui/icons/Search';
 import IconButton from '@material-ui/core/IconButton';
 

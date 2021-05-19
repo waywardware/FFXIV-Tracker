@@ -70,8 +70,10 @@ export const mountsSlice = createSlice({
             updateUrlParameter(state.players)
         },
         playerInfoSuccess: (state, action) => {
-            let { mounts, character } = transformMIMOFromXIVApi(action.payload)
-            let mountIds = Object.keys(mounts).map(mount => {
+            let data = transformMIMOFromXIVApi(action.payload)
+            let character = data.character
+            let mounts = Array.from(data.mounts)
+            let mountIds = mounts.map(mount => {
                 let detailed = state.allMounts[mount] ||
                     Object.values(state.allMounts).find(({ name }) => (name.includes(mount) || mount.includes(name)))
                 return detailed.id

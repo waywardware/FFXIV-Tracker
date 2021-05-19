@@ -66,6 +66,18 @@ export function CollapsibleDrawer() {
                     <Typography>FFXIV Tracker</Typography>
                 </ListItemText>
             </ListItem>
+            {/* <NavLink
+                href="/mounts"
+                isOpen={open}
+                icon={<Home />}
+                linkName="Mounts"
+            />
+            <NavLink
+                href="/minions"
+                isOpen={open}
+                icon={<Pets />}
+                linkName="Minion"
+            /> */}
             <ListItem button component="a" href="https://github.com/waywardware/FFXIV-Tracker">
                 <ListItemIcon className={open ? '' : classes.smallIcon}>
                     <GitHubIcon />
