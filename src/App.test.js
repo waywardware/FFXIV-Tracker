@@ -1,15 +1,19 @@
-import React from 'react';
-import expect from 'expect'
+import { screen } from '@testing-library/dom';
 import { render } from '@testing-library/react';
-import { screen } from '@testing-library/dom'
+import { ConnectedRouter } from 'connected-react-router';
+import expect from 'expect';
+import React from 'react';
 import { Provider } from 'react-redux';
-import store from './app/store';
 import App from './App';
+import store, { history } from './app/store';
+
 
 test('renders learn react link', async () => {
   const { getAllByText } = render(
     <Provider store={store}>
-      <App />
+      <ConnectedRouter history={history}>
+        <App />
+      </ConnectedRouter>
     </Provider>
   );
 
