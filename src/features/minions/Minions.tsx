@@ -3,8 +3,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import CollectionList from '../../components/CollectionList'
 import FilterPills from '../../components/FilterPills'
 import { ProgressBar } from '../../components/ProgressBar'
-import { playerRemove, POSSIBLE_FILTERS, selectAppliedFilters, selectAreMinionsLoading, selectMinions, selectShowMinions, toggleFilter, toggleObtained } from './minionsSlice'
-
+import { POSSIBLE_FILTERS, selectAppliedFilters, selectAreMinionsLoading, selectMinions, selectShowMinions, toggleFilter, toggleObtained } from './minionsSlice'
+import { PlayerUnpinned } from "../../util/CollectionUtils"
+import { Typography } from '@material-ui/core'
 
 export function Minions() {
     const dispatch = useDispatch();
@@ -27,7 +28,7 @@ export function Minions() {
                 playerName={character.name}
                 playerIcon={character.icon}
                 items={collection}
-                closeClicked={() => dispatch(playerRemove({ playerId: character.playerId }))}
+                closeClicked={() => dispatch(PlayerUnpinned({ playerId: character.playerId }))}
                 itemClicked={(itemId) => dispatch(toggleObtained({ playerId: character.playerId, mountId: itemId }))}
             />
         ) : <div />

@@ -3,7 +3,6 @@ import { useDispatch } from 'react-redux';
 import { getPlayerMountInfo } from '../app/xivapi';
 import { Mounts } from '../features/mounts/Mounts';
 import SearchLayout from '../features/search/SearchLayout';
-import './MountFarmPage.css';
 
 function MountFarmPage(props: any) {
   const dispatch = useDispatch();

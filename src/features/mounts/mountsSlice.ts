@@ -50,6 +50,6 @@ export const selectShowMounts = (state: { mounts: CollectionState }) => Object.v
 export const selectAreMountsLoading = (state: { mounts: CollectionState }) => state.mounts.playersLoading > 0
 export const selectPlayers = (state: { mounts: CollectionState }) => state.mounts.players
 
-export const { toggleFilter, toggleObtained, fetchAllMountsRequest, fetchAllMountsSuccess, playerRemove } = mountsSlice.actions;
+export const { toggleFilter, setFilters, toggleObtained, fetchAllMountsRequest, fetchAllMountsSuccess } = mountsSlice.actions;
 
 export default mountsSlice.reducer

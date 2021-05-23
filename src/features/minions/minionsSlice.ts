@@ -49,6 +49,6 @@ export const selectShowMinions = (state: { minions: CollectionState }) => Object
 export const selectAreMinionsLoading = (state: { minions: CollectionState }) => state.minions.playersLoading > 0
 export const selectPlayers = (state: { minions: CollectionState }) => state.minions.players
 
-export const { toggleFilter, toggleObtained, fetchAllMinionsRequest, fetchAllMinionsSuccess, playerRemove } = minionsSlice.actions;
+export const { toggleFilter, setFilters, toggleObtained, fetchAllMinionsRequest, fetchAllMinionsSuccess } = minionsSlice.actions;
 
 export default minionsSlice.reducer

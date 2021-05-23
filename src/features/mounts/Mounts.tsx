@@ -3,7 +3,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import CollectionList from '../../components/CollectionList'
 import FilterPills from '../../components/FilterPills'
 import { ProgressBar } from '../../components/ProgressBar'
-import { playerRemove, POSSIBLE_FILTERS, selectAppliedFilters, selectAreMountsLoading, selectMounts, selectShowMounts, toggleFilter, toggleObtained } from './mountsSlice'
+import { PlayerUnpinned } from "../../util/CollectionUtils"
+import { POSSIBLE_FILTERS, selectAppliedFilters, selectAreMountsLoading, selectMounts, selectShowMounts, toggleFilter, toggleObtained } from './mountsSlice'
 
 
 
@@ -23,12 +24,12 @@ export function Mounts() {
             filterClicked={(filter) => dispatch(toggleFilter({ filter }))}
         />
         <ProgressBar isLoading={isLoading} />
-        {isMountsReadyForDisplay ? mounts.map(({character, collection}) =>
+        {isMountsReadyForDisplay ? mounts.map(({ character, collection }) =>
             <CollectionList key={character.playerId}
                 playerName={character.name}
                 playerIcon={character.icon}
                 items={collection}
-                closeClicked={() => dispatch(playerRemove({ playerId: character.playerId }))}
+                closeClicked={() => dispatch(PlayerUnpinned({ playerId: character.playerId }))}
                 itemClicked={(itemId) => dispatch(toggleObtained({ playerId: character.playerId, mountId: itemId }))}
             />
         ) : <div />
