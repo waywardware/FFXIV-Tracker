@@ -1,4 +1,5 @@
 import { Avatar, Grid, GridList, GridListTile, IconButton, makeStyles, Paper, Tooltip, Typography } from '@material-ui/core'
+import { CollectionItem } from "../models/PlayerInfoModels"
 import CloseIcon from '@material-ui/icons/Close'
 import React from 'react'
 
@@ -14,6 +15,7 @@ const useStyles = makeStyles({
         marginTop: '4pt',
         marginBottom: '4pt'
     },
+    obtained: {},
     notObtained: {
         filter: 'grayscale(100%)',
     },
@@ -35,7 +37,15 @@ const useStyles = makeStyles({
     }
 })
 
-export default function CollectionList({ playerName, playerIcon, collectionList, itemClicked, closeClicked }) {
+export interface CollectionListInput {
+    playerName: string;
+    playerIcon: string;
+    items: Array<CollectionItem>;
+    itemClicked: (itemId: number) => void;
+    closeClicked: () => void;
+}
+
+export default function CollectionList({ playerName, playerIcon, items, itemClicked, closeClicked }: CollectionListInput) {
 
     const classes = useStyles()
 
@@ -57,7 +67,7 @@ export default function CollectionList({ playerName, playerIcon, collectionList,
                 </Grid>
                 <Grid className={classes.collectionList} item lg={11} md={10}>
                     <GridList cellHeight="auto" cols={0} spacing={6}>
-                        {collectionList.map(({ icon, name, obtained, id: itemId, sources }) => (
+                        {items.map(({ icon, name, obtained, itemId, sources }) => (
                             <Tooltip
                                 key={itemId}
                                 title={
@@ -88,7 +98,7 @@ export default function CollectionList({ playerName, playerIcon, collectionList,
                     <Typography
                         variant="caption"
                         className={classes.collectionCount}>
-                        {collectionList.filter(collectable => collectable.obtained).length}/{collectionList.length}
+                        {items.filter(collectable => collectable.obtained).length}/{items.length}
                     </Typography>
                 </Grid>
             </Grid>

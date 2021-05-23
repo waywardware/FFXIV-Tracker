@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit'
 export const drawerSlice = createSlice({
     name: 'drawer',
     initialState: {
-        open: false
+        open: true
     },
     reducers: {
         toggleDrawer: (state) => {

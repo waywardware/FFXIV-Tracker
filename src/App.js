@@ -1,8 +1,9 @@
 import { makeStyles } from '@material-ui/core';
 import { CollapsibleDrawer } from './features/drawer/CollapsibleDrawer'
 import React from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { Route, Switch } from 'react-router';
 import MountFarmPage from './pages/MountFarmPage';
+import MinionFarmPage from './pages/MinionFarmPage';
 
 const useStyles = makeStyles((theme) => (
   {
@@ -20,14 +21,16 @@ function App() {
   const classes = useStyles();
 
   return (
-    <Router>
-      <div className={classes.root}>
-        <CollapsibleDrawer />
-        <div className={classes.app}>
-          <Route exact path="/" component={MountFarmPage} />
-        </div>
+    <div className={classes.root}>
+      <CollapsibleDrawer />
+      <div className={classes.app}>
+        <Switch>
+          <Route path="/mounts" component={MountFarmPage} />
+          <Route path="/minions" component={MinionFarmPage}/>
+          <Route component={MountFarmPage} />
+        </Switch>
       </div>
-    </Router>
+    </div>
   );
 }
 
