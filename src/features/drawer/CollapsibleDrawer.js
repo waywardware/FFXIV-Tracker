@@ -1,7 +1,8 @@
-import { Drawer, List, ListItem, ListItemIcon, ListItemText, makeStyles, Typography } from '@material-ui/core';
-import { GitHub as GitHubIcon, Menu as MenuIcon } from '@material-ui/icons';
+import { Drawer, List, ListItem, ListItemIcon, ListItemText, makeStyles, Typography} from '@material-ui/core';
+import { GitHub as GitHubIcon, Menu as MenuIcon, Home, Pets } from '@material-ui/icons';
 import clsx from 'clsx';
 import React from 'react';
+import { NavLink } from '../../components/NavLink'
 import { useDispatch, useSelector } from 'react-redux';
 import { selectIsDrawerOpen, toggleDrawer } from './drawerSlice';
 
@@ -66,7 +67,7 @@ export function CollapsibleDrawer() {
                     <Typography>FFXIV Tracker</Typography>
                 </ListItemText>
             </ListItem>
-            {/* <NavLink
+            <NavLink
                 href="/mounts"
                 isOpen={open}
                 icon={<Home />}
@@ -77,7 +78,7 @@ export function CollapsibleDrawer() {
                 isOpen={open}
                 icon={<Pets />}
                 linkName="Minion"
-            /> */}
+            />
             <ListItem button component="a" href="https://github.com/waywardware/FFXIV-Tracker">
                 <ListItemIcon className={open ? '' : classes.smallIcon}>
                     <GitHubIcon />
