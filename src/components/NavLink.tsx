@@ -4,6 +4,9 @@ import React from 'react';
 
 const useStyles = makeStyles((theme) => (
     {
+        largeIcon: {
+            minWidth: "40px !important"
+        },
         smallIcon: {
             minWidth: "0px !important"
         },
@@ -25,10 +28,10 @@ export function NavLink({ isOpen, href, icon, linkName }: NavLinkProps) {
     const classes = useStyles()
 
     return <ListItem button component={Link} to={href}>
-        <ListItemIcon className={isOpen ? '' : classes.smallIcon}>
+        <ListItemIcon className={isOpen ? classes.largeIcon : classes.smallIcon}>
             {icon}
         </ListItemIcon>
-        <ListItemText className={isOpen ? '' : classes.hidden}>
+        <ListItemText className={isOpen ? classes.largeIcon : classes.hidden}>
             <Typography>{linkName}</Typography>
         </ListItemText>
     </ListItem>

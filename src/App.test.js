@@ -17,6 +17,6 @@ test('renders learn react link', async () => {
     </Provider>
   );
 
-  const items = await screen.findAllByPlaceholderText("Search...")
+  const items = await screen.findAllByPlaceholderText("Search Character...")
   expect(items).toHaveLength(1);
 });

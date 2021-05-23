@@ -20,9 +20,12 @@ const store = configureStore({
   },
   middleware: [...getDefaultMiddleware(), apiMiddleware]
 });
+<<<<<<< HEAD
 
 store.subscribe(() => {
   window.sessionStorage.setItem("ffxiv", JSON.stringify(store.getState()))
 })
 
 export default store
+=======
+>>>>>>> 3fa4e0dec6d55e45ab1394c789904dead03d8da7

@@ -1,9 +1,11 @@
-import { Drawer, List, ListItem, ListItemIcon, ListItemText, makeStyles, Typography} from '@material-ui/core';
-import { GitHub as GitHubIcon, Menu as MenuIcon, Home, Pets } from '@material-ui/icons';
+import { Box, Drawer, List, ListItem, ListItemIcon, ListItemText, makeStyles, Typography } from '@material-ui/core';
+import { GitHub as GitHubIcon, Menu as MenuIcon } from '@material-ui/icons';
 import clsx from 'clsx';
 import React from 'react';
-import { NavLink } from '../../components/NavLink'
 import { useDispatch, useSelector } from 'react-redux';
+import { NavLink } from '../../components/NavLink';
+import MinionIcon from '../../icons/MinionIcon';
+import MountIcon from '../../icons/MountIcon';
 import { selectIsDrawerOpen, toggleDrawer } from './drawerSlice';
 
 const useStyles = makeStyles((theme) => (
@@ -24,6 +26,9 @@ const useStyles = makeStyles((theme) => (
         },
         drawerClose: {
             overflowX: 'hidden',
+        },
+        largeIcon: {
+            minWidth: "40px !important"
         },
         smallIcon: {
             minWidth: "0px !important"
@@ -60,30 +65,33 @@ export function CollapsibleDrawer() {
         <List>
             <ListItem button
                 onClick={handleToggleDrawer}>
-                <ListItemIcon className={open ? '' : classes.smallIcon}>
+                <ListItemIcon className={open ? classes.largeIcon : classes.smallIcon}>
                     <MenuIcon />
                 </ListItemIcon>
-                <ListItemText className={open ? '' : classes.hidden}>
+                <ListItemText className={open ? classes.largeIcon : classes.hidden}>
                     <Typography>FFXIV Tracker</Typography>
                 </ListItemText>
             </ListItem>
             <NavLink
                 href="/mounts"
                 isOpen={open}
-                icon={<Home />}
+                icon={<MountIcon/>}
                 linkName="Mounts"
             />
             <NavLink
                 href="/minions"
                 isOpen={open}
-                icon={<Pets />}
+                icon={<MinionIcon/>}
                 linkName="Minion"
             />
+            <ListItem mx="auto">
+                <Box mx="auto"/>
+            </ListItem>
             <ListItem button component="a" href="https://github.com/waywardware/FFXIV-Tracker">
-                <ListItemIcon className={open ? '' : classes.smallIcon}>
+                <ListItemIcon className={open ? classes.largeIcon : classes.smallIcon}>
                     <GitHubIcon />
                 </ListItemIcon>
-                <ListItemText className={open ? '' : classes.hidden}>
+                <ListItemText className={open ? classes.largeIcon : classes.hidden}>
                     <Typography>Github Page</Typography>
                 </ListItemText>
             </ListItem>
