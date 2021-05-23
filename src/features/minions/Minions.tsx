@@ -3,9 +3,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import CollectionList from '../../components/CollectionList'
 import FilterPills from '../../components/FilterPills'
 import { ProgressBar } from '../../components/ProgressBar'
-import { POSSIBLE_FILTERS, selectAppliedFilters, selectAreMinionsLoading, selectMinions, selectShowMinions, toggleFilter, toggleObtained } from './minionsSlice'
 import { PlayerUnpinned } from "../../util/CollectionUtils"
-import { Typography } from '@material-ui/core'
+import { POSSIBLE_FILTERS, selectAppliedFilters, selectAreMinionsLoading, selectMinions, selectShowMinions, toggleFilter, toggleObtained } from './minionsSlice'
 
 export function Minions() {
     const dispatch = useDispatch();
