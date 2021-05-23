@@ -80,7 +80,7 @@ export function Search({ onPlayerPinned }) {
         <div>
             <Paper elevation={3} className={styles.searchField}>
                 <InputBase className={styles.input}
-                    placeholder="Search..."
+                    placeholder="Search Character..."
                     onChange={event => value = event.target.value}
                     onKeyUp={enterPressed} />
                 <IconButton aria-label="search" onClick={() => search(value)}>
