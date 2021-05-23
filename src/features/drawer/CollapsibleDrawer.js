@@ -1,12 +1,12 @@
-import { Drawer, List, ListItem, ListItemIcon, ListItemText, makeStyles, Typography, Box} from '@material-ui/core';
-import { GitHub as GitHubIcon, Menu as MenuIcon, Home } from '@material-ui/icons';
+import { Box, Drawer, List, ListItem, ListItemIcon, ListItemText, makeStyles, Typography } from '@material-ui/core';
+import { GitHub as GitHubIcon, Menu as MenuIcon } from '@material-ui/icons';
 import clsx from 'clsx';
 import React from 'react';
-import { NavLink } from '../../components/NavLink'
 import { useDispatch, useSelector } from 'react-redux';
+import { NavLink } from '../../components/NavLink';
+import MinionIcon from '../../icons/MinionIcon';
+import MountIcon from '../../icons/MountIcon';
 import { selectIsDrawerOpen, toggleDrawer } from './drawerSlice';
-import MinionIcon from '../../icons/MinionIcon'
-import MountIcon from '../../icons/MountIcon'
 
 const useStyles = makeStyles((theme) => (
     {
