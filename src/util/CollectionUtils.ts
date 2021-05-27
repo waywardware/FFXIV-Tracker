@@ -131,9 +131,9 @@ export const createCollectionOptions = (
                 let character = data.character
                 let items = collectionExtractor(data)
                 let itemIds = items.map(item => {
-                    let detailed = state.fullCollection[item] ||
+                    let detailed = Object.values(state.fullCollection).find(({name}) => name == item) ||
                         Object.values(state.fullCollection).find(({ name }) => (name.includes(item) || item.includes(name)))
-                    return detailed.itemId
+                    return detailed?.itemId || 0
                 })
                 state.collectionMap[character.playerId] = {
                     name: character.name,
