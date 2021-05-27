@@ -131,7 +131,7 @@ export const createCollectionOptions = (
                 let character = data.character
                 let items = collectionExtractor(data)
                 let itemIds = items.map(item => {
-                    let detailed = Object.values(state.fullCollection).find(({name}) => name == item) ||
+                    let detailed = Object.values(state.fullCollection).find(({name}) => name === item) ||
                         Object.values(state.fullCollection).find(({ name }) => (name.includes(item) || item.includes(name)))
                     return detailed?.itemId || 0
                 })
